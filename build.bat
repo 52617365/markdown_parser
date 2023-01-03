@@ -2,5 +2,5 @@
 
 mkdir ..\build
 pushd ..\build
-cl -Zi ..\markdown_parser\markdown_parser.c
+cl -Zi ..\markdown_parser\markdown_lexer.c
 popd
