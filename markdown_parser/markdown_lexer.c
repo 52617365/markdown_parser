@@ -21,13 +21,14 @@ enum
     Heading4,
     Heading5,
     Heading6,
-    List
+    List,
+    Unknown,
 };
 
 struct Token
 {
-    int type;
-    const char* lexeme;
+    char* lexeme;
+    size_t type;
 };
 
 char peek_prev(void) {
@@ -72,7 +73,7 @@ bool is_space(char c) {
     }
 }
 
-bool is_a_fresh_line() {
+bool is_a_fresh_line(void) {
     switch(peek_prev()) {
         case '\n':
         case '\r':
@@ -84,56 +85,89 @@ bool is_a_fresh_line() {
 
 }
 
-void next(void) {
+char* copy_string(const char* begin, size_t offset) {
+    char* str = malloc(offset + 1);
+    strncpy(str, begin, offset);
+    return str;
+}
+
+struct Token next(void) {
     while(is_space(*example_markdown)) {
         *example_markdown++;
     }
 
-    const char* start = &(example_markdown[2]);
+    int* start_addy = &example_markdown;
     switch(peek_curr()) {
         case '#':
             if (is_a_fresh_line()) {
                 if(lookahead_n_times(1) == ' ') {
-                    printf("h1");
-                    return;
+                    while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                    *start_addy++;
+                    const char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                    return (struct Token){str, Heading1};
                     // it's h1 header
                 }
                 else if(lookahead_n_times(1) == '#' && lookahead_n_times(2) == ' ') {
-                    printf("h2");
-                    return;
+                    while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                    *start_addy += 2;
+
+                    char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                    return (struct Token){str, Heading2};
                     // it's h2 header
                 }
                 else if(lookahead_n_times(1) == '#' && lookahead_n_times(2) == '#' && lookahead_n_times(3) == ' ') {
-                    printf("h3");
-                    return;
-                    // it's h3 header
+                    while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                    *start_addy += 3;
+                    char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                    return (struct Token){str, Heading3};
                 }
                 else if(lookahead_n_times(1) == '#' && lookahead_n_times(2) == '#' && lookahead_n_times(3) == '#' && lookahead_n_times(4) == ' ') {
-                    printf("h4");
-                    return;
-                    // it's h4 header
+                    while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                    *start_addy += 4;
+                    char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                    return (struct Token){str, Heading4};
                 }
                 else if(lookahead_n_times(1) == '#' && lookahead_n_times(2) == '#' && lookahead_n_times(3) == '#' && lookahead_n_times(4) == '#' && lookahead_n_times(5) == ' ') {
-                    printf("h5");
-                    return;
-                    // it's h5 header
+                    while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                    *start_addy += 5;
+                    char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                    return (struct Token){str, Heading5};
                 }
                 else if(lookahead_n_times(1) == '#' && lookahead_n_times(2) == '#' && lookahead_n_times(3) == '#' && lookahead_n_times(4) == '#' && lookahead_n_times(5) == '#' && lookahead_n_times(6) == ' ') {
-                    printf("h6");
-                    return;
-                    // it's h6 header
+                    while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                    *start_addy+=6;
+
+                    char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                    return (struct Token){str, Heading6};
                 }
-                else if(lookahead_n_times(1) == '#' && lookahead_n_times(2) == '#' && lookahead_n_times(3) == '#' && lookahead_n_times(4) == '#' && lookahead_n_times(5) == '#' && lookahead_n_times(6) == '#') {
-                    printf("text");
-                    return;
-                    // it's h6 header
+                else {
+                    while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                    *start_addy += 7;
+
+                    char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                    return (struct Token){str, Text};
                 }
-                
             }
             else {
-                const char* end = &(*example_markdown++);
-                printf("Text: | value: %.*s\n", end-start, start);
-                return;
+                while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+                char* str = copy_string(start_addy, example_markdown-start_addy);
+
+                return (struct Token){str, Text};
             }
 
         case 'a':
@@ -188,16 +222,22 @@ void next(void) {
         case 'X':
         case 'Y':
         case 'Z':
-            while(*example_markdown != '\n' && *example_markdown != '\r') {
-                *example_markdown++;
-            }
-            const char* end = &example_markdown;
-            printf("Text | value: %.*s\n", end - start, start);
+            while(*example_markdown != '\n' && *example_markdown != '\r') {*example_markdown++;}
+
+            char* str = copy_string(start_addy, &example_markdown-start_addy);
+
+            return (struct Token){Text, str};
+            // while(*example_markdown != '\n' && *example_markdown != '\r') {
+            //     *example_markdown++;
+            // }
+            // const char* end = &example_markdown;
+            // printf("Text | value: %.*s\n", end - start_addy, start_addy);
     }
+	return (struct Token){Unknown, ""};
 }
 
 int main(void) {
-    next();
-    next();
+    struct Token token = next();
+    printf("%s", token.lexeme);
     return 0;
 }
