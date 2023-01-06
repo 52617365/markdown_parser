@@ -22,10 +22,12 @@ struct Token
     size_t start;
 };
 
-void consume(const char* sequence);
+void eat(const char* sequence);
+void eat_many(const char* sequence, size_t n);
 char peek(const char* sequence);
 char look_ahead(const char* sequence, size_t n);
-void consume_until_linebreak_or_null(const char* sequence);
+void eat_until_linebreak_or_null(const char* sequence);
 bool is_space(char c);
-char get(const char* sequence);
+char get_next(const char* sequence);
 const char* get_token_type_string(size_t token);
+char next_in(const char* sequence);

@@ -1,0 +1,9 @@
+{
+    "files.associations": {
+        "exception": "c",
+        "iterator": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "xutility": "c"
+    }
+}

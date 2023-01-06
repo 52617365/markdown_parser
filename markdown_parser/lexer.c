@@ -7,75 +7,70 @@
 // const char* example_markdown= "\n# h1_text\nnormal text\n## h2_title\n### h3_title\n#### h4_title\n##### h5_title\n###### h6_title\n*italic_text*\n_italic_text_\n**bold_text**\n__bold_text__\n`code_text`\n```code_block```\n==strike_through==\n- list_member\n> blockquote\n1. numbered_list_member\n2. numbered_list_member\n*italic and **bold**";
 
 const char* sequence= "\n##### h2_text\n";
-int line;
-char* old_src;
+
+size_t line;
+const char* start_of_lexeme;
+const char* end_of_lexeme;
 
 
 struct Token next(void) {
     while(is_space(*sequence)) {
-        consume(sequence);
+        eat(sequence);
     }
 
     const char* start_addy = sequence;
     switch(peek(sequence)) {
         case '\n':
         case '\r':
-                if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == ' ') {
+        ++line;
+            if(look_ahead(sequence, 1) == '#') {
+                eat(sequence);
+
+                if(look_ahead(sequence, 1) == ' ') {
+                    // h1 heading
+                    eat_many(sequence, 2);
+                    start_of_lexeme = sequence;
                     consume_until_linebreak_or_null(sequence);
-
-                    size_t start_of_h1_text = 3;
-                    char* str = copy_string(start_addy + start_of_h1_text, (sequence-(start_addy - start_of_h1_text)));
-
-                    return (struct Token){str, Heading1};
+                    end_of_lexeme = sequence;
+                    // TODO: return.
+                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == ' ') {
+                    // h2
+                    eat_many(sequence, 3);
+                    start_of_lexeme = sequence;
+                    eat_until_linebreak_or_null(sequence);
+                    end_of_lexeme = sequence;
+                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == ' ') {
+                    // h3
+                    eat_many(sequence, 4);
+                    start_of_lexeme = sequence;
+                    eat_until_linebreak_or_null(sequence);
+                    end_of_lexeme = sequence;
+                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == ' ') {
+                    // h4
+                    eat_many(sequence, 5);
+                    start_of_lexeme = sequence;
+                    eat_until_linebreak_or_null(sequence);
+                    end_of_lexeme = sequence;
+                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == '#' && look_ahead(sequence, 5) == ' ') {
+                    // h5
+                    eat_many(sequence, 6);
+                    start_of_lexeme = sequence;
+                    eat_until_linebreak_or_null(sequence);
+                    end_of_lexeme = sequence;
+                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == '#' && look_ahead(sequence, 5) == ' ') {
+                    // h6
+                    eat_many(sequence, 7);
+                    start_of_lexeme = sequence;
+                    eat_until_linebreak_or_null(sequence);
+                    end_of_lexeme = sequence;
+                } else { 
+                    start_of_lexeme = sequence;
+                    eat_until_linebreak_or_null(sequence);
+                    end_of_lexeme = sequence;
+                    // it's text.
                 }
-                else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == ' ') {
-                    consume_until_linebreak_or_null(sequence);
 
-                    int start_of_h2_text = 4;
-                    char* str = copy_string(start_addy + start_of_h2_text, sequence-start_addy + start_of_h2_text);
-
-                    return (struct Token){str, Heading2};
-                }
-                else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == ' ') {
-                    consume_until_linebreak_or_null(sequence);
-
-                    int start_of_h3_text = 5;
-                    char* str = copy_string(start_addy + start_of_h3_text, sequence-start_addy + start_of_h3_text);
-
-                    return (struct Token){str, Heading3};
-                }
-                else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == '#' && look_ahead(sequence, 5) == ' ') {
-                    consume_until_linebreak_or_null(sequence);
-
-                    int start_of_h4_text = 6;
-                    char* str = copy_string(start_addy + start_of_h4_text, sequence-start_addy + start_of_h4_text);
-
-                    return (struct Token){str, Heading4};
-                }
-                else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == '#' && look_ahead(sequence, 5) == '#' && look_ahead(sequence, 6) == ' ') {
-                    consume_until_linebreak_or_null(sequence);
-
-                    int start_of_h5_text = 7;
-
-                    char* str = copy_string(start_addy + start_of_h5_text, sequence-start_addy + start_of_h5_text);
-
-                    return (struct Token){str, Heading5};
-                }
-                else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == '#' && look_ahead(sequence, 5) == '#' && look_ahead(sequence, 6) == '#' && look_ahead(sequence, 7) == ' ') {
-                    consume_until_linebreak_or_null(sequence);
-
-                    size_t start_of_h6_text = 8;
-                    char* str = copy_string(start_addy + start_of_h6_text, sequence-start_addy + start_of_h6_text);
-
-                    return (struct Token){str, Heading6};
-                }
-                else {
-                    consume_until_linebreak_or_null(sequence);
-
-                    char* str = copy_string(start_addy, sequence-start_addy);
-
-                    return (struct Token){str, Text};
-                }
+                // char* str = copy_string(start_addy, sequence-start_addy);
         case '#':
         case 'a':
         case 'b':
@@ -130,7 +125,7 @@ struct Token next(void) {
         case 'Y':
         case 'Z':
         case '_':
-            consume_until_linebreak_or_null(sequence);
+            eat_until_linebreak_or_null(sequence);
             char* str = copy_string(start_addy, sequence-start_addy);
             return (struct Token){str, Text};
     }

@@ -1,16 +1,28 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-void consume(const char* sequence) {
+void eat(const char* sequence) {
     sequence++;
+}
+
+void eat_many(const char* sequence, size_t n) {
+    while (n > 0) {
+        sequence++;
+    }
 }
 
 char peek(const char* sequence) {
     return *sequence;
 }
 
-char get(const char* sequence) {
+char get_next(const char* sequence) {
     return *sequence++;
+}
+
+char next_in(const char* sequence) {
+    char next = *sequence++;
+    *sequence--;
+    return next;
 }
 
 char look_ahead(const char* sequence, size_t n) {
@@ -29,9 +41,9 @@ char look_ahead(const char* sequence, size_t n) {
     return peeked_char;
 }
 
-void consume_until_linebreak_or_null(const char* sequence) {
+void eat_until_linebreak_or_null(const char* sequence) {
         while(*sequence != '\n' && *sequence != '\r' && *sequence != '\0') {
-            consume(sequence);
+            eat(sequence);
         }
         // here we have arrived at one of the checked characters, 
         // reverting one to get back to the non checked characters.
