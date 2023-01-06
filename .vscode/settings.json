@@ -4,6 +4,7 @@
         "iterator": "c",
         "type_traits": "c",
         "utility": "c",
-        "xutility": "c"
+        "xutility": "c",
+        "token.h": "c"
     }
 }

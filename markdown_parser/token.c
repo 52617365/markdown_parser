@@ -1,13 +1,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
+#include "token.h"
 
 void eat(const char* sequence) {
-    sequence++;
+    *sequence++;
 }
 
 void eat_many(const char* sequence, size_t n) {
     while (n > 0) {
-        sequence++;
+        sequence +=1;
     }
 }
 
@@ -48,17 +49,7 @@ void eat_until_linebreak_or_null(const char* sequence) {
         // here we have arrived at one of the checked characters, 
         // reverting one to get back to the non checked characters.
         // TODO: check if this is even needed.
-        // sequence--;
-}
-
-bool is_space(char c) {
-    switch(c) {
-        case ' ':
-        case '\t':
-            return true;
-        default:
-            return false;
-    }
+        sequence--;
 }
 
 const char* get_token_type_string(size_t token) {

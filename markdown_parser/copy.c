@@ -1,5 +1,6 @@
 #include <stdlib.h>
 #include <string.h>
+#include "copy.h"
 
 char* copy_string(const char* begin, size_t offset) {
     char* str = malloc(offset + 1);
