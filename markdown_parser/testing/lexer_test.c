@@ -91,3 +91,17 @@ void test_next_h6(void) {
         LOG_RED("token.lexeme was not 'heading'");
     }
 }
+void test_next_text(void) {
+    char* example_text = "\ntext";
+    Token token = next(&example_text);
+
+    if(strcmp(token.lexeme, "heading") == 0) {
+        if(token.type == Text) { 
+            LOG_GREEN("PASS");
+        } else {
+            LOG_RED("token.type was not 'Text'");
+        }
+    } else {
+        LOG_RED("token.lexeme was not 'text'");
+    }
+}

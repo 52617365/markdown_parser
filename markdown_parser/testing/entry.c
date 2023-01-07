@@ -8,5 +8,6 @@ int main(void) {
     test_next_h4();
     test_next_h5();
     test_next_h6();
+    test_next_text();
 }
 
