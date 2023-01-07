@@ -6,73 +6,105 @@
 #include "lexer.h"
 // const char* example_markdown= "\n# h1_text\nnormal text\n## h2_title\n### h3_title\n#### h4_title\n##### h5_title\n###### h6_title\n*italic_text*\n_italic_text_\n**bold_text**\n__bold_text__\n`code_text`\n```code_block```\n==strike_through==\n- list_member\n> blockquote\n1. numbered_list_member\n2. numbered_list_member\n*italic and **bold**";
 
-const char* sequence= "\n##### h2_text\n";
+const char* sequence= "\n# h6_text\n";
 
 size_t line;
 const char* start_of_lexeme;
 const char* end_of_lexeme;
 
 
+void eat(size_t n) {
+    while (n > 0) {
+        n--;
+        sequence++;
+    }
+}
+
+char peek(void) {
+    return *sequence;
+}
+
+char look_ahead(size_t n) {
+    size_t i = n;
+
+    for(; i > 0; i--) {
+        sequence++;
+    }
+    char peeked_char = *sequence;
+
+    for(; i < n; i++) {
+        sequence--;
+    }
+
+    return peeked_char;
+}
+
+void eat_until_linebreak_or_null(void) {
+        while(*sequence != '\n' && *sequence != '\r' && *sequence != '\0') {
+            eat(1);
+        }
+}
+
 Token next(void) {
     const char* start_addy = sequence;
-    switch(peek(sequence)) {
+    switch(peek()) {
         case '\n':
         case '\r':
         ++line;
-            if(look_ahead(sequence, 1) == '#') {
-                eat(sequence); // TODO: why does this not get assigned??
+            if(look_ahead( 1) == '#') {
+                eat(1); // TODO: why does this not get assigned??
 
-                if(look_ahead(sequence, 1) == ' ') {
+                if(look_ahead( 1) == ' ') {
                     // h1 heading
-                    eat_many(sequence, 2);
+                    eat(2);
                     start_of_lexeme = sequence;
-                    eat_until_linebreak_or_null(sequence);
+                    eat_until_linebreak_or_null();
                     end_of_lexeme = sequence;
 
                     char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
                     return (Token){lexeme, Heading1, line, start_of_lexeme, end_of_lexeme};
                     // TODO: return.
-                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == ' ') {
+                } else if(look_ahead(1) == '#' && look_ahead(2) == ' ') {
                     // h2
-                    eat_many(sequence, 3);
+                    eat(3);
                     start_of_lexeme = sequence;
-                    eat_until_linebreak_or_null(sequence);
+                    eat_until_linebreak_or_null();
                     end_of_lexeme = sequence;
 
                     char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
                     return (Token){lexeme, Heading2, line, start_of_lexeme, end_of_lexeme};
-                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == ' ') {
+                } else if(look_ahead(1) == '#' && look_ahead(2) == '#' && look_ahead(3) == ' ') {
                     // h3
-                    eat_many(sequence, 4);
+                    eat(4);
                     start_of_lexeme = sequence;
-                    eat_until_linebreak_or_null(sequence);
+                    eat_until_linebreak_or_null();
                     end_of_lexeme = sequence;
 
                     char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
                     return (Token){lexeme, Heading3, line, start_of_lexeme, end_of_lexeme};
-                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == ' ') {
+                } else if(look_ahead(1) == '#' && look_ahead(2) == '#' && look_ahead(3) == '#' && look_ahead(4) == ' ') {
                     // h4
-                    eat_many(sequence, 5);
+                    eat(5);
                     start_of_lexeme = sequence;
-                    eat_until_linebreak_or_null(sequence);
+                    eat_until_linebreak_or_null();
                     end_of_lexeme = sequence;
 
                     char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
                     return (Token){lexeme, Heading4, line, start_of_lexeme, end_of_lexeme};
-                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == '#' && look_ahead(sequence, 5) == ' ') {
+                } else if(look_ahead(1) == '#' && look_ahead(2) == '#' && look_ahead(3) == '#' && look_ahead(4) == '#' && look_ahead(5) == ' ') {
                     // h5
-                    eat_many(sequence, 6);
+                    eat(6);
                     start_of_lexeme = sequence;
-                    eat_until_linebreak_or_null(sequence);
+                    eat_until_linebreak_or_null();
                     end_of_lexeme = sequence;
 
                     char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
                     return (Token){lexeme, Heading5, line, start_of_lexeme, end_of_lexeme};
-                } else if(look_ahead(sequence, 1) == '#' && look_ahead(sequence, 2) == '#' && look_ahead(sequence, 3) == '#' && look_ahead(sequence, 4) == '#' && look_ahead(sequence, 5) == ' ') {
+                } else if(look_ahead(1) == '#' && look_ahead(2) == '#' && look_ahead(3) == '#' && look_ahead(4) == '#' && look_ahead(5) == '#' && look_ahead(6) == ' ') {
                     // h6
-                    eat_many(sequence, 7);
+                    eat(7);
                     start_of_lexeme = sequence;
-                    eat_until_linebreak_or_null(sequence);
+                    eat_until_linebreak_or_null();
                     end_of_lexeme = sequence;
 
                     char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
@@ -80,7 +112,7 @@ Token next(void) {
                 }
             } else { 
                 start_of_lexeme = sequence;
-                eat_until_linebreak_or_null(sequence);
+                eat_until_linebreak_or_null();
                 end_of_lexeme = sequence;
 
                 char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
@@ -143,7 +175,7 @@ Token next(void) {
         case 'Y':
         case 'Z':
         case '_':
-            eat_until_linebreak_or_null(sequence);
+            eat_until_linebreak_or_null();
             char* str = copy_string(start_addy, sequence-start_addy);
             return (Token){str, Text};
         default:
