@@ -2,6 +2,7 @@
 #include "copy.h"
 #include <stdio.h>
 #include "token.h"
+#include "heading.h"
 
 size_t line;
 const char* start_of_lexeme;
@@ -14,84 +15,9 @@ Token next(char** sequence) {
         case '\n':
         case '\r':
             ++line;
-            if(look_ahead(1, *sequence) == '#') {
-                eat(1, sequence);
-                if(look_ahead(1, *sequence) == ' ') {
-                    // h1 heading
-                    eat(2, sequence);
-                    start_of_lexeme = *sequence;
-                    eat_until_linebreak_or_null(sequence);
-                    end_of_lexeme = *sequence;
-
-                    char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                    return (Token){lexeme, Heading1, line};
-                    // TODO: return.
-                } else if(look_ahead(1, *sequence) == '#' && look_ahead(2, *sequence) == ' ') {
-                    // h2
-                    eat(3, sequence);
-                    start_of_lexeme = *sequence;
-                    eat_until_linebreak_or_null(sequence);
-                    end_of_lexeme = *sequence;
-
-                    char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                    return (Token){lexeme, Heading2, line};
-                } else if(look_ahead(1, *sequence) == '#' && look_ahead(2, *sequence) == '#' && look_ahead(3, *sequence) == ' ') {
-                    // h3
-                    eat(4, sequence);
-                    start_of_lexeme = *sequence;
-                    eat_until_linebreak_or_null(sequence);
-                    end_of_lexeme = *sequence;
-
-                    char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                    return (Token){lexeme, Heading3, line};
-                } else if(look_ahead(1, *sequence) == '#' && look_ahead(2, *sequence) == '#' && look_ahead(3, *sequence) == '#' && look_ahead(4, *sequence) == ' ') {
-                    // h4
-                    eat(5, sequence);
-                    start_of_lexeme = *sequence;
-                    eat_until_linebreak_or_null(sequence);
-                    end_of_lexeme = *sequence;
-
-                    char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                    return (Token){lexeme, Heading4, line};
-                } else if(look_ahead(1, *sequence) == '#' && look_ahead(2, *sequence) == '#' && look_ahead(3, *sequence) == '#' && look_ahead(4, *sequence) == '#' && look_ahead(5, *sequence) == ' ') {
-                    // h5
-                    eat(6, sequence);
-                    start_of_lexeme = *sequence;
-                    eat_until_linebreak_or_null(sequence);
-                    end_of_lexeme = *sequence;
-
-                    char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                    return (Token){lexeme, Heading5, line};
-                } else if(look_ahead(1, *sequence) == '#' && look_ahead(2, *sequence) == '#' && look_ahead(3, *sequence) == '#' && look_ahead(4, *sequence) == '#' && look_ahead(5, *sequence) == '#' && look_ahead(6, *sequence) == ' ') {
-                    // h6
-                    eat(7, sequence);
-                    start_of_lexeme = *sequence;
-                    eat_until_linebreak_or_null(sequence);
-                    end_of_lexeme = *sequence;
-
-                    char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                    return (Token){lexeme, Heading6, line};
-                } else {
-                    // only headings up to h6 are supported by obsidian. this is therefore text.
-                    start_of_lexeme = *sequence;
-                    eat_until_linebreak_or_null(sequence);
-                    end_of_lexeme = *sequence;
-
-                    char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                    return (Token){lexeme, Text, line};
-                    // it's text.
-                }
-            } else {  // TODO: before this else we have to check all the other stuff that can only start after a new line.
-                start_of_lexeme = *sequence;
-                eat_until_linebreak_or_null(sequence);
-                end_of_lexeme = *sequence;
-
-                char* lexeme = copy_string(start_of_lexeme, end_of_lexeme-start_of_lexeme);
-                return (Token){lexeme, Text, line};
-                // it's text.
-            }
-
-                // char* str = copy_string(start_addy, sequence-start_addy);
+            Token token = handle_heading_if_present(sequence); // TODO: this will go to a function in the future that handles all the other possibilities too. it's only here for now.
+            token.line = line;
+            return token;
         case '#':
         case 'a':
         case 'b':
