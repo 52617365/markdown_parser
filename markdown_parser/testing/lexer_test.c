@@ -18,5 +18,5 @@ void test_next_heading(void) {
     }
 }
 void test_wont_pass(void) {
-    LOG_RED("FAIL");
+    LOG_RED("token.lexeme was not 'heading'");
 }
