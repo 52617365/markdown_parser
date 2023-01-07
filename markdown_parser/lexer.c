@@ -2,7 +2,6 @@
 #include "copy.h"
 #include <stdio.h>
 #include "token.h"
-// const char* example_markdown= "\n# h1_text\nnormal text\n## h2_title\n### h3_title\n#### h4_title\n##### h5_title\n###### h6_title\n*italic_text*\n_italic_text_\n**bold_text**\n__bold_text__\n`code_text`\n```code_block```\n==strike_through==\n- list_member\n> blockquote\n1. numbered_list_member\n2. numbered_list_member\n*italic and **bold**";
 
 size_t line;
 const char* start_of_lexeme;
@@ -16,7 +15,7 @@ Token next(char** sequence) {
         case '\r':
             ++line;
             if(look_ahead(1, *sequence) == '#') {
-                eat(1, sequence); // TODO: why does this not get assigned??
+                eat(1, sequence);
                 if(look_ahead(1, *sequence) == ' ') {
                     // h1 heading
                     eat(2, sequence);
