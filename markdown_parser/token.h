@@ -19,8 +19,6 @@ typedef struct
     char* lexeme;
     size_t type;
     size_t line;
-    const char* start;
-    const char* end;
 } Token;
 
 const char* get_token_type_string(size_t token);
