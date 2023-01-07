@@ -3,6 +3,7 @@
 #include "../lexer.h"
 #include <stdio.h>
 #include "tests.h"
+#include <string.h>
 
 void test_next_h1(void) {
     char* example_h1_heading = "\n# heading";
@@ -10,12 +11,12 @@ void test_next_h1(void) {
 
     if(strcmp(token.lexeme, "heading") == 0) {
         if(token.type == Heading1) { 
-            LOG_GREEN("PASS");
+            PRINT_SUCCESS();
         } else {
-            LOG_RED("token.type was not 'Heading1'");
+            LOG_RED("token.type", "Heading1", get_token_type_string(token.type));
         }
     } else {
-        LOG_RED("token.lexeme was not 'heading'");
+        LOG_RED("token.lexeme", "heading", token.lexeme);
     }
 }
 
@@ -25,12 +26,12 @@ void test_next_h2(void) {
 
     if(strcmp(token.lexeme, "heading") == 0) {
         if(token.type == Heading2) { 
-            LOG_GREEN("PASS");
+            PRINT_SUCCESS();
         } else {
-            LOG_RED("token.type was not 'Heading2'");
+            LOG_RED("token.type", "Heading2", get_token_type_string(token.type));
         }
     } else {
-        LOG_RED("token.lexeme was not 'heading'");
+        LOG_RED("token.lexeme", "heading", token.lexeme);
     }
 }
 
@@ -40,12 +41,12 @@ void test_next_h3(void) {
 
     if(strcmp(token.lexeme, "heading") == 0) {
         if(token.type == Heading3) { 
-            LOG_GREEN("PASS");
+            PRINT_SUCCESS();
         } else {
-            LOG_RED("token.type was not 'Heading3'");
+            LOG_RED("token.type", "Heading3", get_token_type_string(token.type));
         }
     } else {
-        LOG_RED("token.lexeme was not 'heading'");
+        LOG_RED("token.lexeme", "heading", token.lexeme);
     }
 }
 void test_next_h4(void) {
@@ -54,12 +55,12 @@ void test_next_h4(void) {
 
     if(strcmp(token.lexeme, "heading") == 0) {
         if(token.type == Heading4) { 
-            LOG_GREEN("PASS");
+            PRINT_SUCCESS();
         } else {
-            LOG_RED("token.type was not 'Heading4'");
+            LOG_RED("token.type", "Heading4", get_token_type_string(token.type));
         }
     } else {
-        LOG_RED("token.lexeme was not 'heading'");
+        LOG_RED("token.lexeme", "heading", token.lexeme);
     }
 }
 
@@ -69,12 +70,12 @@ void test_next_h5(void) {
 
     if(strcmp(token.lexeme, "heading") == 0) {
         if(token.type == Heading5) { 
-            LOG_GREEN("PASS");
+            PRINT_SUCCESS();
         } else {
-            LOG_RED("token.type was not 'Heading5'");
+            LOG_RED("token.type", "Heading5", get_token_type_string(token.type));
         }
     } else {
-        LOG_RED("token.lexeme was not 'heading'");
+        LOG_RED("token.lexeme", "heading", token.lexeme);
     }
 }
 void test_next_h6(void) {
@@ -83,12 +84,12 @@ void test_next_h6(void) {
 
     if(strcmp(token.lexeme, "heading") == 0) {
         if(token.type == Heading6) { 
-            LOG_GREEN("PASS");
+            PRINT_SUCCESS();
         } else {
-            LOG_RED("token.type was not 'Heading6'");
+            LOG_RED("token.type", "Heading6", token.lexeme);
         }
     } else {
-        LOG_RED("token.lexeme was not 'heading'");
+        LOG_RED("token.lexeme", "heading", token.lexeme);
     }
 }
 void test_next_text(void) {
@@ -97,11 +98,11 @@ void test_next_text(void) {
 
     if(strcmp(token.lexeme, "heading") == 0) {
         if(token.type == Text) { 
-            LOG_GREEN("PASS");
+            PRINT_SUCCESS();
         } else {
-            LOG_RED("token.type was not 'Text'");
+            LOG_RED("token.type", "Text", get_token_type_string(token.type));
         }
     } else {
-        LOG_RED("token.lexeme was not 'text'");
+        LOG_RED("token.lexeme", "Text", token.lexeme);
     }
 }

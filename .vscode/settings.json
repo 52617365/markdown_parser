@@ -8,6 +8,8 @@
         "token.h": "c",
         "lexer.h": "c",
         "stdio.h": "c",
-        "copy.h": "c"
+        "copy.h": "c",
+        "tests.h": "c",
+        "lexer_test.h": "c"
     }
 }
