@@ -1,6 +1,5 @@
 #include "copy.h"
 #include <stdlib.h>
-#include <stdio.h>
 #include <string.h>
 char *copy_string(const char *begin, size_t offset)
 {

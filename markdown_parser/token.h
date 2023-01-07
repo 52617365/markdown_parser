@@ -1,3 +1,5 @@
+#ifndef FILE_H
+#define FILE_H
 typedef enum
 {
     Text,
@@ -14,7 +16,7 @@ typedef enum
     Unknown,
 }TokenType;
 
-typedef struct
+typedef struct token
 {
     char* lexeme;
     size_t type;
@@ -26,3 +28,4 @@ void eat(size_t n, char** sequence);
 char peek(char* sequence);
 char look_ahead(size_t n, char* sequence);
 void eat_until_linebreak_or_null(char** sequence);
+#endif
