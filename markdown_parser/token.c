@@ -2,6 +2,37 @@
 #include <stdbool.h>
 #include "token.h"
 
+void eat(size_t n, char** sequence) {
+    while (n > 0) {
+        n--;
+        (*sequence)++;
+    }
+}
+
+char peek(char* sequence) {
+    return *sequence;
+}
+
+char look_ahead(size_t n, char* sequence) {
+    size_t i = n;
+
+    for(; i > 0; i--) {
+        sequence++;
+    }
+    char peeked_char = *sequence;
+
+    for(; i < n; i++) {
+        sequence--;
+    }
+
+    return peeked_char;
+}
+
+void eat_until_linebreak_or_null(char** sequence) {
+        while(**sequence != '\n' && **sequence != '\r' && **sequence != '\0') {
+            eat(1, sequence);
+        }
+}
 const char* get_token_type_string(size_t token) {
     if(token == 0) {
         return "Text";

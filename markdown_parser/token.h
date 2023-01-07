@@ -24,3 +24,7 @@ typedef struct
 } Token;
 
 const char* get_token_type_string(size_t token);
+void eat(size_t n, char** sequence);
+char peek(char* sequence);
+char look_ahead(size_t n, char* sequence);
+void eat_until_linebreak_or_null(char** sequence);
