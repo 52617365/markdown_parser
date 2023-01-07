@@ -1,2 +1,2 @@
 #include "token.h"
-Token next(void);
+Token next(char* sequence);
