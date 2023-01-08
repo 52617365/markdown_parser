@@ -27,7 +27,7 @@ void test_next_heading(void) {
     }
 }
 
-void test_next_letters_that_could_be_thought_of_heading(void) {
+void test_next_letters_that_could_be_mistaken_for_heading(void) {
     char* text = "\n####### ";
     next(&text);
     Token token = next(&text);
