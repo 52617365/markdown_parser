@@ -6,7 +6,7 @@ typedef enum
 {
     Number,          // 0-9
     Letters,         // [a-z]
-    GreaterThan,     // >
+    Blockquote,      // >
     Dash,            // -
     ExclamationMark, // !
     Asterisk,        // *

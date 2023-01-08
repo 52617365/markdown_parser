@@ -23,7 +23,7 @@ char* get_token_type_string(size_t token) {
     switch(token) {
         case 0: return "Number";
         case 1: return "Text";
-        case 2: return "GreaterThan";
+        case 2: return "Blockquote";
         case 3: return "Dash";
         case 4: return "ExclamationMark";
         case 5: return "Asterisk";
@@ -108,6 +108,7 @@ bool is_identifier_char(char c) {
     case '7':
     case '8':
     case '9':
+    case '#':
       return true;
     default:
       return false;
@@ -222,10 +223,14 @@ Token next(const char** sequence) {
             return (Token){Number, start, *sequence};
         case '#':
             start = *sequence;
+            size_t amount_of_hashes = 0;
             // Headings can only start on a new line.
-            if (peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
-              while(peek(*sequence) == '#') get(sequence);
-              if(peek(*sequence) == ' ') { // Headings have to end with a space.
+            if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+              while(peek(*sequence) == '#') {
+                get(sequence);
+                ++amount_of_hashes; // we are calculating the amount of hashes because if(amount_of_hashes > 6) then it would be <h6+> and it's not supported by HTML5.
+              }
+              if(peek(*sequence) == ' ' && amount_of_hashes <= 6) { // Headings have to end with a space.
                 return (Token){Heading, start, *sequence};
               } else {
                 return (Token){Letters, start, *sequence};
@@ -233,6 +238,18 @@ Token next(const char** sequence) {
             } else {
               return (Token){Letters, start, ++(*sequence)};
             }
+        case '>':
+          start = *sequence;
+          // Blockquotes can only start on a new line.
+          if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+            if(get(sequence) == ' ') {
+              return (Token){Blockquote, start, *sequence};
+            } else {
+              return (Token){Letters, start, *sequence};
+            }
+          } else {
+              return (Token){Letters, start, *sequence};
+          }
         default:
             return (Token){Unknown, *sequence, ++(*sequence)};
     }

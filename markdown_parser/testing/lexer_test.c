@@ -27,6 +27,17 @@ void test_next_heading(void) {
     }
 }
 
+void test_next_letters_that_could_be_thought_of_heading(void) {
+    char* text = "\n####### ";
+    next(&text);
+    Token token = next(&text);
+
+    if(token.type == Letters) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Letters", get_token_type_string(token.type));
+    }
+}
 
 void test_next_numbers(void) {
     char* text = "22233311";
@@ -36,5 +47,17 @@ void test_next_numbers(void) {
         PRINT_SUCCESS();
     } else {
         LOG_RED("token.type", "Number", get_token_type_string(token.type));
+    }
+}
+
+void test_next_blockquote(void) {
+    char* text = "\n> ";
+    next(&text);
+    Token token = next(&text);
+
+    if(token.type == Blockquote) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Blockquote", get_token_type_string(token.type));
     }
 }
