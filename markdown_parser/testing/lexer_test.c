@@ -9,7 +9,7 @@ void test_next_letters(void) {
     Token token = next(&text);
 
     if(token.type == Letters) {
-            PRINT_SUCCESS();
+        PRINT_SUCCESS();
     } else {
         LOG_RED("token.type", "Letters", get_token_type_string(token.type));
     }
@@ -21,7 +21,7 @@ void test_next_heading(void) {
     Token token = next(&text);
 
     if(token.type == Heading) {
-            PRINT_SUCCESS();
+        PRINT_SUCCESS();
     } else {
         LOG_RED("token.type", "Heading", get_token_type_string(token.type));
     }
@@ -33,7 +33,7 @@ void test_next_numbers(void) {
     Token token = next(&text);
 
     if(token.type == Number) {
-            PRINT_SUCCESS();
+        PRINT_SUCCESS();
     } else {
         LOG_RED("token.type", "Number", get_token_type_string(token.type));
     }
