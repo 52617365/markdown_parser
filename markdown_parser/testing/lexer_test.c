@@ -27,3 +27,14 @@ void test_next_heading(void) {
     }
 }
 
+
+void test_next_numbers(void) {
+    char* text = "22233311";
+    Token token = next(&text);
+
+    if(token.type == Number) {
+            PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Number", get_token_type_string(token.type));
+    }
+}

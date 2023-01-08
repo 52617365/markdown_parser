@@ -5,9 +5,9 @@
 const char* start;
 
 char peek_prev(const char* sequence){ 
-    *sequence--;
+    --sequence;
     char prev_char = *sequence;
-    *sequence++;
+    sequence++;
     return prev_char;
 }
 

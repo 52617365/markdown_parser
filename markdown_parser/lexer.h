@@ -27,6 +27,7 @@ typedef struct
 } Token;
 
 char peek(const char* sequence);
+char peek_prev(const char* sequence); 
 char* get_token_type_string(size_t token);
 bool is_identifier_char(char c);
 bool is_digit(char c);
