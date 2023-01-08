@@ -139,6 +139,7 @@ size_t line;
 size_t position;
 
 Token next(const char** sequence) {
+    while(**sequence == ' ') get(sequence);
     switch(peek(*sequence)) {
         case '\0':
           return (Token){End, *sequence, ++(*sequence)};
