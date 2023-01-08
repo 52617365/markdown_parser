@@ -16,6 +16,7 @@ typedef enum
     Unknown,         // 
     End,             // '\0'
     Heading,         // '#' 1-6 times.
+    ListItem,        // '-' at the start of the line followed by space.
 }TokenType;
 
 typedef struct
@@ -30,6 +31,7 @@ char peek_prev(const char* sequence);
 char* get_token_type_string(size_t token);
 bool is_identifier_char(char c);
 bool is_digit(char c);
+void consume(const char** sequence);
 Token next(const char** sequence);
 
 #endif

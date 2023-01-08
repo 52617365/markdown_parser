@@ -61,3 +61,15 @@ void test_next_blockquote(void) {
         LOG_RED("token.type", "Blockquote", get_token_type_string(token.type));
     }
 }
+
+void test_next_list_item(void) {
+    char* text = "\n- ";
+    next(&text);
+    Token token = next(&text);
+
+    if(token.type == ListItem) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "ListItem", get_token_type_string(token.type));
+    }   
+}

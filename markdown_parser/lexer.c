@@ -19,6 +19,11 @@ char get(const char** sequence) {
     return *(*sequence)++;
 }
 
+void consume(const char** sequence) {
+  *(*sequence)++;
+}
+
+
 char* get_token_type_string(size_t token) {
     switch(token) {
         case 0: return "Number";
@@ -33,6 +38,7 @@ char* get_token_type_string(size_t token) {
         case 9: return "Unknown";
         case 10: return "End";
         case 11: return "Heading";
+        case 12: return "ListItem";
         default: return "Unknown";
     }
 }
@@ -244,6 +250,18 @@ Token next(const char** sequence) {
               return (Token){Blockquote, start, ++(*sequence)};
           } else {
               return (Token){Letters, start, ++(*sequence)};
+          }
+        case '-':
+          if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+            consume(sequence);
+            if(peek(*sequence) == ' ') {
+              return (Token){ListItem, start, *sequence};
+            }
+            else {
+              return (Token){Letters, start, *sequence};
+            }
+          } else {
+              return (Token){Letters, start, *sequence};
           }
         default:
             return (Token){Unknown, *sequence, ++(*sequence)};
