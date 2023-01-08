@@ -24,16 +24,15 @@ char* get_token_type_string(size_t token) {
         case 0: return "Number";
         case 1: return "Text";
         case 2: return "GreaterThan";
-        case 3: return "HashTag";
-        case 4: return "Dash";
-        case 5: return "ExclamationMark";
-        case 6: return "Asterisk";
-        case 7: return "Underscore";
-        case 8: return "Backtick";
-        case 9: return "Linebreak";
-        case 10: return "Unknown";
-        case 11: return "End";
-        case 12: return "Heading";
+        case 3: return "Dash";
+        case 4: return "ExclamationMark";
+        case 5: return "Asterisk";
+        case 6: return "Underscore";
+        case 7: return "Backtick";
+        case 8: return "Linebreak";
+        case 9: return "Unknown";
+        case 10: return "End";
+        case 11: return "Heading";
         default: return "Unknown";
     }
 }
@@ -232,7 +231,7 @@ Token next(const char** sequence) {
                 return (Token){Letters, start, *sequence};
               }
             } else {
-              return (Token){HashTag, start, ++(*sequence)};
+              return (Token){Letters, start, ++(*sequence)};
             }
         default:
             return (Token){Unknown, *sequence, ++(*sequence)};
