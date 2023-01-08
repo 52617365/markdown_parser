@@ -1,0 +1,15 @@
+{
+    "files.associations": {
+        "exception": "c",
+        "iterator": "c",
+        "type_traits": "c",
+        "utility": "c",
+        "xutility": "c",
+        "token.h": "c",
+        "lexer.h": "c",
+        "stdio.h": "c",
+        "copy.h": "c",
+        "tests.h": "c",
+        "lexer_test.h": "c"
+    }
+}
