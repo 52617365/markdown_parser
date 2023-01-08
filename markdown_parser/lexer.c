@@ -243,7 +243,7 @@ Token next(const char** sequence) {
           if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
               return (Token){Blockquote, start, ++(*sequence)};
           } else {
-              return (Token){Letters, start, *sequence};
+              return (Token){Letters, start, ++(*sequence)};
           }
         default:
             return (Token){Unknown, *sequence, ++(*sequence)};
