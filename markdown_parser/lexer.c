@@ -148,7 +148,7 @@ Token next(const char** sequence) {
     while(**sequence == ' ') get(sequence);
     switch(peek(*sequence)) {
         case '\0':
-          return (Token){End, *sequence, ++(*sequence)};
+          return (Token){End, *sequence, *(*sequence++)};
         case '\n':
         case '\r':
           ++line;
@@ -237,9 +237,9 @@ Token next(const char** sequence) {
                 ++amount_of_hashes; // we are calculating the amount of hashes because if(amount_of_hashes > 6) then it would be <h6+> and it's not supported by HTML5.
               }
               if(peek(*sequence) == ' ' && amount_of_hashes <= 6) { // Headings have to end with a space.
-                return (Token){Heading, start, *sequence};
+                return (Token){Heading, start, *(*sequence++)};
               } else {
-                return (Token){Letters, start, *sequence};
+                return (Token){Letters, start, *(*sequence++)};
               }
             } else {
               return (Token){Letters, start, ++(*sequence)};
@@ -252,6 +252,7 @@ Token next(const char** sequence) {
               return (Token){Letters, start, ++(*sequence)};
           }
         case '-':
+          // List items can only start on a new line.
           if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
             consume(sequence);
             if(peek(*sequence) == ' ') {
