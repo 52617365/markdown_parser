@@ -39,6 +39,7 @@ char* get_token_type_string(size_t token) {
         case 10: return "End";
         case 11: return "Heading";
         case 12: return "ListItem";
+        case 13: return "NumberedListItem";
         default: return "Unknown";
     }
 }
@@ -212,7 +213,7 @@ Token next(const char** sequence) {
         case 'Ä':
         case 'Ö':
             start = *sequence;
-            while(is_identifier_char(peek(*sequence))) get(sequence);
+            while(is_identifier_char(peek(*sequence))) consume(sequence);
             return (Token){Letters, start, *sequence};
         case '0':
         case '1':
@@ -226,6 +227,15 @@ Token next(const char** sequence) {
         case '9':
             start = *sequence;
             while(is_digit(peek(*sequence))) get(sequence);
+            if (peek(*sequence) == '.') { 
+              consume(sequence);
+              // numbered list items have to have a space after dot.
+              if (peek(*sequence) == ' ') { 
+                return (Token){NumberedListItem, start, *sequence};
+              } else {
+                return (Token){Number, start, --(*sequence)};
+              }
+            }
             return (Token){Number, start, *sequence};
         case '#':
             start = *sequence;
@@ -258,10 +268,10 @@ Token next(const char** sequence) {
           if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
             consume(sequence);
             if(peek(*sequence) == ' ') {
-              return (Token){ListItem, start, *sequence};
+              return (Token){ListItem, start, ++(*sequence)};
             }
             else {
-              return (Token){Letters, start, *sequence};
+              return (Token){Letters, start, ++(*sequence)};
             }
           } else {
               return (Token){Letters, start, *sequence};
