@@ -239,14 +239,9 @@ Token next(const char** sequence) {
               return (Token){Letters, start, ++(*sequence)};
             }
         case '>':
-          start = *sequence;
           // Blockquotes can only start on a new line.
           if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
-            if(get(sequence) == ' ') {
-              return (Token){Blockquote, start, *sequence};
-            } else {
-              return (Token){Letters, start, *sequence};
-            }
+              return (Token){Blockquote, start, ++(*sequence)};
           } else {
               return (Token){Letters, start, *sequence};
           }

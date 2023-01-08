@@ -51,7 +51,7 @@ void test_next_numbers(void) {
 }
 
 void test_next_blockquote(void) {
-    char* text = "\n> ";
+    char* text = "\n>";
     next(&text);
     Token token = next(&text);
 
