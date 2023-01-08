@@ -7,6 +7,8 @@ int main(void) {
     test_next_blockquote();
     test_next_letters_that_could_be_mistaken_for_heading();
     test_next_list_item();
+    test_next_numbered_list_item();
+    test_full_source_coverage();
     // define test function calls here.
 }
 
