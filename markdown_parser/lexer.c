@@ -44,7 +44,6 @@ char* get_token_type_string(size_t token) {
     }
 }
 
-
 bool is_identifier_char(char c) {
   switch (c) {
     case 'a':
@@ -115,7 +114,6 @@ bool is_identifier_char(char c) {
     case '7':
     case '8':
     case '9':
-    case '#':
       return true;
     default:
       return false;
@@ -149,7 +147,7 @@ Token next(const char** sequence) {
     while(**sequence == ' ') get(sequence);
     switch(peek(*sequence)) {
         case '\0':
-          return (Token){End, *sequence, (*sequence)++};
+          return (Token){End, *sequence, ++(*sequence)};
         case '\n':
         case '\r':
           ++line;
@@ -215,6 +213,14 @@ Token next(const char** sequence) {
             start = *sequence;
             while(is_identifier_char(peek(*sequence))) consume(sequence);
             return (Token){Letters, start, *sequence};
+        case '_':
+              // TODO: if next char is '_' then it's potential bold text.
+              // we need to do a look ahead to know for sure.
+
+              // TODO: if second is ' ' then it's potential italic text.
+              // we once again need to do a look ahead to make sure.
+        case '*':
+            // TODO.
         case '0':
         case '1':
         case '2':
