@@ -102,7 +102,7 @@ void test_full_source_coverage(void) {
     PRINT_SUCCESS();
 }
 
-void test_newline_italic_text() {
+void test_newline_italic_text(void) {
     const char* sequence = "\n_hellobrothermen";
     next(&sequence);
     Token token = next(&sequence);
