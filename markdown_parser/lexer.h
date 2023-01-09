@@ -18,6 +18,7 @@ typedef enum
     Heading,          // '#' 1-6 times.
     ListItem,         // '-' at the start of the line followed by space.
     NumberedListItem, // Digit followed by .
+    Italic,           // *text*, \n_text or _text_.
 }TokenType;
 
 typedef struct

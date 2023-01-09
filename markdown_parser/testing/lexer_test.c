@@ -101,3 +101,15 @@ void test_full_source_coverage(void) {
     }
     PRINT_SUCCESS();
 }
+
+void test_newline_italic_text() {
+    const char* sequence = "\n_hellobrothermen";
+    next(&sequence);
+    Token token = next(&sequence);
+
+    if(token.type == Italic) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Italic", get_token_type_string(token.type));
+    }   
+}

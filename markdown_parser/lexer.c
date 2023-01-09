@@ -40,6 +40,7 @@ char* get_token_type_string(size_t token) {
         case 11: return "Heading";
         case 12: return "ListItem";
         case 13: return "NumberedListItem";
+        case 14: return "Italic";
         default: return "Unknown";
     }
 }
@@ -214,11 +215,22 @@ Token next(const char** sequence) {
             while(is_identifier_char(peek(*sequence))) consume(sequence);
             return (Token){Letters, start, *sequence};
         case '_':
-              // TODO: if next char is '_' then it's potential bold text.
-              // we need to do a look ahead to know for sure.
-
-              // TODO: if second is ' ' then it's potential italic text.
-              // we once again need to do a look ahead to make sure.
+              start = *sequence;
+              if (peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+                // whole line is italic.
+                while(is_identifier_char(peek(*sequence))) consume(sequence);
+                return (Token){Italic, start, *sequence};
+              }
+              consume(sequence);
+              if (peek(*sequence) == ' ') {
+                // possible italic (confirm with lookahead.)
+                // while(is_identifier_char(peek(*sequence))) consume(sequence);
+                // TODO: make this branch.
+              }
+              if (peek(*sequence) == '_') {
+                // potential bold (confirm with lookahead.)
+                // TODO: make this branch.
+              }
         case '*':
             // TODO.
         case '0':

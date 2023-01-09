@@ -6,3 +6,4 @@ void test_next_letters_that_could_be_mistaken_for_heading(void);
 void test_next_list_item(void);
 void test_next_numbered_list_item(void);
 void test_full_source_coverage(void);
+void test_newline_italic_text(void);
