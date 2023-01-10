@@ -40,7 +40,6 @@ char* get_token_type_string(size_t token) {
         case 11: return "Heading";
         case 12: return "ListItem";
         case 13: return "NumberedListItem";
-        case 14: return "Italic";
         default: return "Unknown";
     }
 }
@@ -215,24 +214,11 @@ Token next(const char** sequence) {
             while(is_identifier_char(peek(*sequence))) consume(sequence);
             return (Token){Letters, start, *sequence};
         case '_':
-              start = *sequence;
-              if (peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
-                // whole line is italic.
-                while(is_identifier_char(peek(*sequence))) consume(sequence);
-                return (Token){Italic, start, *sequence};
-              }
-              consume(sequence);
-              if (peek(*sequence) == ' ') {
-                // possible italic (confirm with lookahead.)
-                // while(is_identifier_char(peek(*sequence))) consume(sequence);
-                // TODO: make this branch.
-              }
-              if (peek(*sequence) == '_') {
-                // potential bold (confirm with lookahead.)
-                // TODO: make this branch.
-              }
+             // NOTE: I'm going to handle bold and italic later I think.
+            return (Token){Underscore, *sequence, ++(*sequence)};
         case '*':
-            // TODO.
+            // @NOTE:
+            return (Token){Asterisk, *sequence, ++(*sequence)};
         case '0':
         case '1':
         case '2':
@@ -247,7 +233,7 @@ Token next(const char** sequence) {
             while(is_digit(peek(*sequence))) get(sequence);
             if (peek(*sequence) == '.') { 
               consume(sequence);
-              // numbered list items have to have a space after dot.
+              // Numbered list items have to have a space after dot.
               if (peek(*sequence) == ' ') { 
                 return (Token){NumberedListItem, start, *sequence};
               } else {
@@ -262,7 +248,7 @@ Token next(const char** sequence) {
             if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
               while(peek(*sequence) == '#') {
                 get(sequence);
-                ++amount_of_hashes; // we are calculating the amount of hashes because if(amount_of_hashes > 6) then it would be <h6+> and it's not supported by HTML5.
+                ++amount_of_hashes; // We are calculating the amount of hashes because if(amount_of_hashes > 6) then it would be <h6+> and it's not supported by HTML5.
               }
               if(peek(*sequence) == ' ' && amount_of_hashes <= 6) { // Headings have to end with a space.
                 return (Token){Heading, start, ++(*sequence)};

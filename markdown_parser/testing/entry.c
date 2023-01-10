@@ -9,7 +9,8 @@ int main(void) {
     test_next_list_item();
     test_next_numbered_list_item();
     test_full_source_coverage();
-    test_newline_italic_text();
+    test_next_asterisk();
+    test_next_underscore();
     // define test function calls here.
 }
 

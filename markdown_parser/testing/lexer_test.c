@@ -102,14 +102,25 @@ void test_full_source_coverage(void) {
     PRINT_SUCCESS();
 }
 
-void test_newline_italic_text(void) {
-    const char* sequence = "\n_hellobrothermen";
-    next(&sequence);
+void test_next_asterisk(void) {
+    const char* sequence = "*";
     Token token = next(&sequence);
 
-    if(token.type == Italic) {
+    if(token.type == Asterisk) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Italic", get_token_type_string(token.type));
+        LOG_RED("token.type", "Asterisk", get_token_type_string(token.type));
     }   
 }
+
+void test_next_underscore(void) {
+    const char* sequence = "_";
+    Token token = next(&sequence);
+
+    if(token.type == Underscore) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Underscore", get_token_type_string(token.type));
+    }   
+}
+
