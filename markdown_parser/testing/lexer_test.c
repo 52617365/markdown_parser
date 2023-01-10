@@ -124,3 +124,14 @@ void test_next_underscore(void) {
     }   
 }
 
+void test_next_percentage(void) {
+    const char* sequence = "%";
+    Token token = next(&sequence);
+
+    if(token.type == Percentage) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Percentage", get_token_type_string(token.type));
+    }   
+}
+

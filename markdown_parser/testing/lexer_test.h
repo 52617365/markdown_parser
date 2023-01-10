@@ -8,3 +8,4 @@ void test_next_numbered_list_item(void);
 void test_full_source_coverage(void);
 void test_next_asterisk(void);
 void test_next_underscore(void);
+void test_next_percentage(void);

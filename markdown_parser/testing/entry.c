@@ -1,5 +1,6 @@
 #include "tests.h"
 
+// define test function calls here.
 int main(void) {
     test_next_letters();
     test_next_heading();
@@ -11,6 +12,6 @@ int main(void) {
     test_full_source_coverage();
     test_next_asterisk();
     test_next_underscore();
-    // define test function calls here.
+    test_next_percentage();
 }
 

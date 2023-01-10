@@ -219,6 +219,10 @@ Token next(const char** sequence) {
         case '*':
             // @NOTE:
             return (Token){Asterisk, *sequence, ++(*sequence)};
+        case '`':
+            return (Token){Backtick, *sequence, ++(*sequence)};
+        case '%':
+            return (Token){Percentage, *sequence, ++(*sequence)};
         case '0':
         case '1':
         case '2':
