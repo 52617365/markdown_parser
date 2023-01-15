@@ -275,24 +275,29 @@ Token next(const char** sequence) {
             // Headings can only start on a new line.
             if(is_line_break(peek_prev(*sequence))) {
               while(peek(*sequence) == '#') {
-                get(sequence);
+                consume(sequence);
                 ++amount_of_hashes; // We are calculating the amount of hashes because if(amount_of_hashes > 6) then it would be <h6+> and it's not supported by HTML5.
               }
               if(peek(*sequence) == ' ' && amount_of_hashes <= 6) { // Headings have to end with a space.
-                return (Token){Heading, start, ++(*sequence)};
+                consume(sequence);
+                return (Token){Heading, start, *sequence};
               } else {
-                return (Token){Text, start, ++(*sequence)};
+                consume(sequence);
+                return (Token){Text, start, *sequence};
               }
             } else {
-              return (Token){Text, start, ++(*sequence)};
+              consume(sequence);
+              return (Token){Text, start, *sequence};
             }
         case '>':
           start = *sequence;
           // Blockquotes can only start on a new line.
           if(is_line_break(peek_prev(*sequence))) {
-              return (Token){Blockquote, start, ++(*sequence)};
+              consume(sequence);
+              return (Token){Blockquote, start, *sequence};
           } else {
-              return (Token){Text, start, ++(*sequence)};
+              consume(sequence);
+              return (Token){Text, start, *sequence};
           }
         case '-':
           start = *sequence;
@@ -302,13 +307,16 @@ Token next(const char** sequence) {
             if(peek(*sequence) == ' ') {
               while(is_identifier_char(**sequence)) consume(sequence);
               // TODO: do we want to capture the text within the list item here?
-              return (Token){ListItem, start, ++(*sequence)};
+              consume(sequence);
+              return (Token){ListItem, start, *sequence};
             }
             else {
               while(is_identifier_char(**sequence)) consume(sequence);
-              return (Token){Text, start, ++(*sequence)};
+              consume(sequence);
+              return (Token){Text, start, *sequence};
             }
           } else {
+              consume(sequence);
               return (Token){Text, start, *sequence};
           }
         case '*':
@@ -316,7 +324,8 @@ Token next(const char** sequence) {
 
           // Handling list item.
           if(peek_prev(*sequence) == '\n' && peek_next(*sequence) == ' ') {
-            while(is_identifier_char(**sequence)) consume(sequence);
+            while(is_identifier_char(peek(*sequence))) consume(sequence);
+            consume(sequence);
             return (Token){ListItem, start, *sequence};
           }
 
@@ -326,10 +335,12 @@ Token next(const char** sequence) {
             while(is_identifier_char(**sequence)) consume(sequence);
             if(peek(*sequence) == '*' || is_line_break(peek(*sequence))) {
               // Italic text
+              consume(sequence);
               return (Token){Italic, start, *sequence};
             }
             else {
               // Regular text
+              consume(sequence);
               return (Token){Text, start, *sequence};
             }
           // Checking if there is 2 '*'s in a row.
@@ -338,6 +349,8 @@ Token next(const char** sequence) {
             if(peek_next(*sequence) == ' ') {
               // Not bold because it was '** '
               while(is_identifier_char(**sequence)) consume(sequence);
+
+              consume(sequence);
               return (Token){Text, start, *sequence}; // TODO get rid of the potential *'s.
             }
             else if (is_identifier_char(peek_next(*sequence))) {
@@ -345,17 +358,22 @@ Token next(const char** sequence) {
               while(is_identifier_char(**sequence)) consume(sequence);
 
               if(is_line_break(peek(*sequence))) {
+
+                  consume(sequence);
                   return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
               }
               else if(peek(*sequence) == '*' && peek_next(*sequence) == '*') {
+
                   consume(sequence);
                   return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
                   // strong text.
               } 
               else {
+                consume(sequence);
                 return (Token){Text, start, *sequence};
               }
             } else {
+                consume(sequence);
                 return (Token){Text, start, *sequence};
             }
           }
