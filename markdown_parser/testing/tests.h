@@ -8,3 +8,4 @@
 
 #define PRINT_SUCCESS() printf("%s[%d] %s ||\t%s\t %s %s\n", ANSI_COLOR_GREEN, __LINE__, __FUNCTION__, __FILE__, "PASS", ANSI_COLOR_RESET);
 #define LOG_RED(string, expected, got) fprintf(stderr, "%s[%d] %s ||\t%s\t %s - %s - expected: '%s', got: '%s' %s\n", ANSI_COLOR_RED, __LINE__, __FUNCTION__, __FILE__, "FAIL", string, expected, got, ANSI_COLOR_RESET);
+#define LOG_ADDRESS_RED(string, expected, got) fprintf(stderr, "%s[%d] %s ||\t%s\t %s - %s - expected: '%p', got: '%p' %s\n", ANSI_COLOR_RED, __LINE__, __FUNCTION__, __FILE__, "FAIL", string, expected, got, ANSI_COLOR_RESET);

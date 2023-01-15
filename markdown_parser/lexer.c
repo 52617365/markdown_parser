@@ -19,25 +19,30 @@ char get(const char** sequence) {
     return *(*sequence)++;
 }
 
+void consume(const char** sequence) {
+  *(*sequence)++;
+}
+
+
 char* get_token_type_string(size_t token) {
     switch(token) {
         case 0: return "Number";
         case 1: return "Text";
-        case 2: return "GreaterThan";
-        case 3: return "HashTag";
-        case 4: return "Dash";
-        case 5: return "ExclamationMark";
-        case 6: return "Asterisk";
-        case 7: return "Underscore";
-        case 8: return "Backtick";
-        case 9: return "Linebreak";
-        case 10: return "Unknown";
-        case 11: return "End";
-        case 12: return "Heading";
+        case 2: return "Blockquote";
+        case 3: return "Dash";
+        case 4: return "ExclamationMark";
+        case 5: return "Asterisk";
+        case 6: return "Underscore";
+        case 7: return "Backtick";
+        case 8: return "Linebreak";
+        case 9: return "Unknown";
+        case 10: return "End";
+        case 11: return "Heading";
+        case 12: return "ListItem";
+        case 13: return "NumberedListItem";
         default: return "Unknown";
     }
 }
-
 
 bool is_identifier_char(char c) {
   switch (c) {
@@ -139,6 +144,7 @@ size_t line;
 size_t position;
 
 Token next(const char** sequence) {
+    while(**sequence == ' ') get(sequence);
     switch(peek(*sequence)) {
         case '\0':
           return (Token){End, *sequence, ++(*sequence)};
@@ -205,8 +211,18 @@ Token next(const char** sequence) {
         case 'Ä':
         case 'Ö':
             start = *sequence;
-            while(is_identifier_char(peek(*sequence))) get(sequence);
+            while(is_identifier_char(peek(*sequence))) consume(sequence);
             return (Token){Letters, start, *sequence};
+        case '_':
+             // NOTE: I'm going to handle bold and italic later I think.
+            return (Token){Underscore, *sequence, ++(*sequence)};
+        case '*':
+            // @NOTE:
+            return (Token){Asterisk, *sequence, ++(*sequence)};
+        case '`':
+            return (Token){Backtick, *sequence, ++(*sequence)};
+        case '%':
+            return (Token){Percentage, *sequence, ++(*sequence)};
         case '0':
         case '1':
         case '2':
@@ -219,20 +235,55 @@ Token next(const char** sequence) {
         case '9':
             start = *sequence;
             while(is_digit(peek(*sequence))) get(sequence);
+            if (peek(*sequence) == '.') { 
+              consume(sequence);
+              // Numbered list items have to have a space after dot.
+              if (peek(*sequence) == ' ') { 
+                return (Token){NumberedListItem, start, *sequence};
+              } else {
+                return (Token){Number, start, --(*sequence)};
+              }
+            }
             return (Token){Number, start, *sequence};
         case '#':
             start = *sequence;
+            size_t amount_of_hashes = 0;
             // Headings can only start on a new line.
-            if (peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
-              while(peek(*sequence) == '#') get(sequence);
-              if(peek(*sequence) == ' ') { // Headings have to end with a space.
-                return (Token){Heading, start, *sequence};
+            if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+              while(peek(*sequence) == '#') {
+                get(sequence);
+                ++amount_of_hashes; // We are calculating the amount of hashes because if(amount_of_hashes > 6) then it would be <h6+> and it's not supported by HTML5.
+              }
+              if(peek(*sequence) == ' ' && amount_of_hashes <= 6) { // Headings have to end with a space.
+                return (Token){Heading, start, ++(*sequence)};
               } else {
-                return (Token){Letters, start, *sequence};
+                return (Token){Letters, start, ++(*sequence)};
               }
             } else {
-              return (Token){HashTag, start, ++(*sequence)};
+              return (Token){Letters, start, ++(*sequence)};
             }
+        case '>':
+          start = *sequence;
+          // Blockquotes can only start on a new line.
+          if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+              return (Token){Blockquote, start, ++(*sequence)};
+          } else {
+              return (Token){Letters, start, ++(*sequence)};
+          }
+        case '-':
+          start = *sequence;
+          // List items can only start on a new line.
+          if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+            consume(sequence);
+            if(peek(*sequence) == ' ') {
+              return (Token){ListItem, start, ++(*sequence)};
+            }
+            else {
+              return (Token){Letters, start, ++(*sequence)};
+            }
+          } else {
+              return (Token){Letters, start, *sequence};
+          }
         default:
             return (Token){Unknown, *sequence, ++(*sequence)};
     }
