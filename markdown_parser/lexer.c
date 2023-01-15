@@ -22,10 +22,6 @@ char peek(const char* sequence) {
     return *sequence;
 }
 
-char get(const char** sequence) {
-    return *(*sequence)++;
-}
-
 void consume(const char** sequence) {
   *(*sequence)++;
 }
@@ -174,7 +170,7 @@ size_t line;
 size_t position;
 
 Token next(const char** sequence) {
-    while(**sequence == ' ') get(sequence);
+    while(**sequence == ' ') consume(sequence);
     switch(peek(*sequence)) {
         case '\0':
           return (Token){End, *sequence, ++(*sequence)};
@@ -258,7 +254,7 @@ Token next(const char** sequence) {
         case '8':
         case '9':
             start = *sequence;
-            while(is_digit(peek(*sequence))) get(sequence);
+            while(is_digit(peek(*sequence))) consume(sequence);
             if (peek(*sequence) == '.') { 
               consume(sequence);
               // Numbered list items have to have a space after dot.
@@ -324,13 +320,22 @@ Token next(const char** sequence) {
 
           // Handling list item.
           if(peek_prev(*sequence) == '\n' && peek_next(*sequence) == ' ') {
+            consume(sequence);
             while(is_identifier_char(peek(*sequence))) consume(sequence);
             consume(sequence);
             return (Token){ListItem, start, *sequence};
           }
 
+          if(peek_prev(*sequence) == '\n' && is_identifier_char(peek_next(*sequence))) {
+              consume(sequence);
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              consume(sequence);
+              return (Token){Italic, start, *sequence};
+          }
+
           // Handling if it's italic (*...) or bold (**...).
-          if(is_identifier_char(peek_next(*sequence))) {
+          if(peek_next(*sequence) != '*') {
+            consume(sequence);
             // Potential italic because there was 1 '*' only.
             while(is_identifier_char(**sequence)) consume(sequence);
             if(peek(*sequence) == '*' || is_line_break(peek(*sequence))) {
@@ -358,12 +363,10 @@ Token next(const char** sequence) {
               while(is_identifier_char(**sequence)) consume(sequence);
 
               if(is_line_break(peek(*sequence))) {
-
                   consume(sequence);
                   return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
               }
               else if(peek(*sequence) == '*' && peek_next(*sequence) == '*') {
-
                   consume(sequence);
                   return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
                   // strong text.
