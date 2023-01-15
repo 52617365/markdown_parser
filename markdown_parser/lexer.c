@@ -345,12 +345,10 @@ Token next(const char** sequence) {
           }
           if(peek_next(*sequence) == '*') { // TODO: this doesn't work well, fix.
               // Here it's either bold text or bold inside italic (3x '*') which is unsupported.
+              while(peek(*sequence) == '*') consume(sequence);
               consume(sequence); 
               while(is_identifier_char(peek(*sequence))) consume(sequence);
-              consume(sequence);
-              if(peek_next(*sequence) == '*') {
-                consume(sequence);
-              }
+              while(peek(*sequence) == '*') consume(sequence);
               return (Token){Bold, start, *sequence};
           }
 
@@ -359,5 +357,5 @@ Token next(const char** sequence) {
       default:
           consume(sequence);
           return (Token){Unknown, *sequence, *sequence};
-}
+    }
 }
