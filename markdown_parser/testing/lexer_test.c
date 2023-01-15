@@ -8,10 +8,10 @@ void test_next_letters(void) {
     char* text = "heading";
     Token token = next(&text);
 
-    if(token.type == Letters) {
+    if(token.type == Text) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Letters", get_token_type_string(token.type));
+        LOG_RED("token.type", "Text", get_token_type_string(token.type));
     }
 }
 
@@ -32,10 +32,10 @@ void test_next_letters_that_could_be_mistaken_for_heading(void) {
     next(&text);
     Token token = next(&text);
 
-    if(token.type == Letters) {
+    if(token.type == Text) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Letters", get_token_type_string(token.type));
+        LOG_RED("token.type", "Text", get_token_type_string(token.type));
     }
 }
 
@@ -43,10 +43,10 @@ void test_next_numbers(void) {
     char* text = "22233311";
     Token token = next(&text);
 
-    if(token.type == Number) {
+    if(token.type == Text) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Number", get_token_type_string(token.type));
+        LOG_RED("token.type", "Text", get_token_type_string(token.type));
     }
 }
 
@@ -102,36 +102,37 @@ void test_full_source_coverage(void) {
     PRINT_SUCCESS();
 }
 
-void test_next_asterisk(void) {
-    const char* sequence = "*";
+void test_next_italic(void) {
+    const char* sequence = "\n*asd";
+    next(&sequence);
     Token token = next(&sequence);
 
-    if(token.type == Asterisk) {
+    if(token.type == Italic) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Asterisk", get_token_type_string(token.type));
+        LOG_RED("token.type", "Italic", get_token_type_string(token.type));
     }   
 }
 
-void test_next_underscore(void) {
-    const char* sequence = "_";
+void test_next_italic2(void) {
+    const char* sequence = "*asd*";
     Token token = next(&sequence);
 
-    if(token.type == Underscore) {
+    if(token.type == Italic) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Underscore", get_token_type_string(token.type));
+        LOG_RED("token.type", "Italic", get_token_type_string(token.type));
     }   
 }
 
-void test_next_percentage(void) {
-    const char* sequence = "%";
+
+void test_next_bold(void) {
+    const char* sequence = "**asd**";
     Token token = next(&sequence);
 
-    if(token.type == Percentage) {
+    if(token.type == Bold) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Percentage", get_token_type_string(token.type));
+        LOG_RED("token.type", "Bold", get_token_type_string(token.type));
     }   
 }
-

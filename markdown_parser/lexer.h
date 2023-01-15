@@ -4,8 +4,7 @@
 
 typedef enum
 {
-    Number,           // 0-9
-    Letters,          // [a-z]
+    Text,             // 0-9 or a-z + nordic.
     Blockquote,       // >
     Dash,             // -
     ExclamationMark,  // !
@@ -13,12 +12,13 @@ typedef enum
     Underscore,       // _
     Backtick,         // ` 
     Linebreak,        // \n
-    Unknown,          // 
+    Unknown,          //
     End,              // '\0'
     Heading,          // '#' 1-6 times.
-    ListItem,         // '-' at the start of the line followed by space.
+    ListItem,         // '-' or '*' at the start of the line followed by space.
     NumberedListItem, // Digit followed by .
-    Percentage,       // %
+    Italic,           // \n*{text}, \n_{text}, _{text}_ or *{text}*
+    Bold,             // \n**{text}, \n__{text}, __{text}__ or **{text}**
 }TokenType;
 
 typedef struct

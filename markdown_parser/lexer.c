@@ -11,6 +11,13 @@ char peek_prev(const char* sequence){
     return prev_char;
 }
 
+char peek_next(const char* sequence){ 
+    ++sequence;
+    char next_char = *sequence;
+    sequence--;
+    return next_char;
+}
+
 char peek(const char* sequence) {
     return *sequence;
 }
@@ -26,22 +33,33 @@ void consume(const char** sequence) {
 
 char* get_token_type_string(size_t token) {
     switch(token) {
-        case 0: return "Number";
-        case 1: return "Text";
-        case 2: return "Blockquote";
-        case 3: return "Dash";
-        case 4: return "ExclamationMark";
-        case 5: return "Asterisk";
-        case 6: return "Underscore";
-        case 7: return "Backtick";
-        case 8: return "Linebreak";
-        case 9: return "Unknown";
-        case 10: return "End";
-        case 11: return "Heading";
-        case 12: return "ListItem";
-        case 13: return "NumberedListItem";
+        case 0: return "Text";
+        case 1: return "Blockquote";
+        case 2: return "Dash";
+        case 3: return "ExclamationMark";
+        case 4: return "Asterisk";
+        case 5: return "Underscore";
+        case 6: return "Backtick";
+        case 7: return "Linebreak";
+        case 8: return "Unknown";
+        case 9: return "End";
+        case 10: return "Heading";
+        case 11: return "ListItem";
+        case 12: return "NumberedListItem";
+        case 13: return "Italic";
+        case 14: return "Bold";
         default: return "Unknown";
     }
+}
+
+bool is_line_break(char c) {
+  switch(c) {
+    case '\n':
+    case '\r':
+      return true;
+    default: 
+      return false;
+  }
 }
 
 bool is_identifier_char(char c) {
@@ -114,6 +132,18 @@ bool is_identifier_char(char c) {
     case '7':
     case '8':
     case '9':
+    case ':':
+    case ';':
+    case ' ':
+    case '.':
+    case ',':
+    case '!':
+    case '@':
+    case '^': // TODO: Might change cuz footnotes https://help.obsidian.md/How+to/Format+your+notes#Footnotes.
+    case '%': // TODO: Might change cuz comments https://help.obsidian.md/How+to/Format+your+notes#Comments.
+    case '&':
+    case '?':
+    case '|':
       return true;
     default:
       return false;
@@ -210,19 +240,13 @@ Token next(const char** sequence) {
         case 'Å':
         case 'Ä':
         case 'Ö':
+        case '%':
+        case '_': // TODO: this will change cuz italic and strong text.
             start = *sequence;
             while(is_identifier_char(peek(*sequence))) consume(sequence);
-            return (Token){Letters, start, *sequence};
-        case '_':
-             // NOTE: I'm going to handle bold and italic later I think.
-            return (Token){Underscore, *sequence, ++(*sequence)};
-        case '*':
-            // @NOTE:
-            return (Token){Asterisk, *sequence, ++(*sequence)};
+            return (Token){Text, start, *sequence};
         case '`':
             return (Token){Backtick, *sequence, ++(*sequence)};
-        case '%':
-            return (Token){Percentage, *sequence, ++(*sequence)};
         case '0':
         case '1':
         case '2':
@@ -241,15 +265,15 @@ Token next(const char** sequence) {
               if (peek(*sequence) == ' ') { 
                 return (Token){NumberedListItem, start, *sequence};
               } else {
-                return (Token){Number, start, --(*sequence)};
+                return (Token){Text, start, --(*sequence)};
               }
             }
-            return (Token){Number, start, *sequence};
+            return (Token){Text, start, *sequence};
         case '#':
             start = *sequence;
             size_t amount_of_hashes = 0;
             // Headings can only start on a new line.
-            if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+            if(is_line_break(peek_prev(*sequence))) {
               while(peek(*sequence) == '#') {
                 get(sequence);
                 ++amount_of_hashes; // We are calculating the amount of hashes because if(amount_of_hashes > 6) then it would be <h6+> and it's not supported by HTML5.
@@ -257,33 +281,86 @@ Token next(const char** sequence) {
               if(peek(*sequence) == ' ' && amount_of_hashes <= 6) { // Headings have to end with a space.
                 return (Token){Heading, start, ++(*sequence)};
               } else {
-                return (Token){Letters, start, ++(*sequence)};
+                return (Token){Text, start, ++(*sequence)};
               }
             } else {
-              return (Token){Letters, start, ++(*sequence)};
+              return (Token){Text, start, ++(*sequence)};
             }
         case '>':
           start = *sequence;
           // Blockquotes can only start on a new line.
-          if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+          if(is_line_break(peek_prev(*sequence))) {
               return (Token){Blockquote, start, ++(*sequence)};
           } else {
-              return (Token){Letters, start, ++(*sequence)};
+              return (Token){Text, start, ++(*sequence)};
           }
         case '-':
           start = *sequence;
           // List items can only start on a new line.
-          if(peek_prev(*sequence) == '\n' || peek_prev(*sequence) == '\r') {
+          if(is_line_break(peek_prev(*sequence))) {
             consume(sequence);
             if(peek(*sequence) == ' ') {
+              while(is_identifier_char(**sequence)) consume(sequence);
+              // TODO: do we want to capture the text within the list item here?
               return (Token){ListItem, start, ++(*sequence)};
             }
             else {
-              return (Token){Letters, start, ++(*sequence)};
+              while(is_identifier_char(**sequence)) consume(sequence);
+              return (Token){Text, start, ++(*sequence)};
             }
           } else {
-              return (Token){Letters, start, *sequence};
+              return (Token){Text, start, *sequence};
           }
+        case '*':
+          start = *sequence;
+
+          // Handling list item.
+          if(peek_prev(*sequence) == '\n' && peek_next(*sequence) == ' ') {
+            while(is_identifier_char(**sequence)) consume(sequence);
+            return (Token){ListItem, start, *sequence};
+          }
+
+          // Handling if it's italic (*...) or bold (**...).
+          if(is_identifier_char(peek_next(*sequence))) {
+            // Potential italic because there was 1 '*' only.
+            while(is_identifier_char(**sequence)) consume(sequence);
+            if(peek(*sequence) == '*' || is_line_break(peek(*sequence))) {
+              // Italic text
+              return (Token){Italic, start, *sequence};
+            }
+            else {
+              // Regular text
+              return (Token){Text, start, *sequence};
+            }
+          // Checking if there is 2 '*'s in a row.
+          } else if(peek_next(*sequence) == '*') {
+            consume(sequence);
+            if(peek_next(*sequence) == ' ') {
+              // Not bold because it was '** '
+              while(is_identifier_char(**sequence)) consume(sequence);
+              return (Token){Text, start, *sequence}; // TODO get rid of the potential *'s.
+            }
+            else if (is_identifier_char(peek_next(*sequence))) {
+              // Bold because an identifier was after the **'s.
+              while(is_identifier_char(**sequence)) consume(sequence);
+
+              if(is_line_break(peek(*sequence))) {
+                  return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
+              }
+              else if(peek(*sequence) == '*' && peek_next(*sequence) == '*') {
+                  consume(sequence);
+                  return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
+                  // strong text.
+              } 
+              else {
+                return (Token){Text, start, *sequence};
+              }
+            } else {
+                return (Token){Text, start, *sequence};
+            }
+          }
+        // case '_':
+          // TODO:
         default:
             return (Token){Unknown, *sequence, ++(*sequence)};
     }

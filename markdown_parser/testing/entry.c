@@ -10,8 +10,8 @@ int main(void) {
     test_next_list_item();
     test_next_numbered_list_item();
     test_full_source_coverage();
-    test_next_asterisk();
-    test_next_underscore();
-    test_next_percentage();
+    test_next_italic();
+    test_next_italic2();
+    test_next_bold();
 }
 
