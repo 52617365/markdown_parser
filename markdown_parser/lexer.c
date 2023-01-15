@@ -44,6 +44,7 @@ char* get_token_type_string(size_t token) {
         case 12: return "NumberedListItem";
         case 13: return "Italic";
         case 14: return "Bold";
+        case 15: return "Unsupported";
         default: return "Unknown";
     }
 }
@@ -325,64 +326,45 @@ Token next(const char** sequence) {
             consume(sequence);
             return (Token){ListItem, start, *sequence};
           }
+          //
 
-          if(peek_prev(*sequence) == '\n' && is_identifier_char(peek_next(*sequence))) {
+          // If user escaped the * then it's regular text.
+          if(peek_prev(*sequence) == '\\') {
+            consume(sequence);
+            while(is_identifier_char(peek(*sequence))) consume(sequence);
+            consume(sequence);
+            return (Token){Text, start, *sequence};
+          }
+
+          // Here we have a '*' + identifier so it's italic.
+          if(is_identifier_char(peek_next(*sequence))) {
               consume(sequence);
-              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              while(peek(*sequence) != '\0' && !is_line_break(peek(*sequence)) && peek(*sequence) != '*') consume(sequence);
               consume(sequence);
               return (Token){Italic, start, *sequence};
           }
-
-          // Handling if it's italic (*...) or bold (**...).
-          if(peek_next(*sequence) != '*') {
+        
+        if(peek_next(*sequence) == '*') {
+            // Here it's either bold text or bold inside italic (3x '*') which is unsupported.
             consume(sequence);
-            // Potential italic because there was 1 '*' only.
-            while(is_identifier_char(**sequence)) consume(sequence);
-            if(peek(*sequence) == '*' || is_line_break(peek(*sequence))) {
-              // Italic text
+
+            if(peek_next(*sequence) == '*') { // we don't want to support bold text inside italic cuz im not gonna use it.
               consume(sequence);
-              return (Token){Italic, start, *sequence};
+              return (Token){Unsupported, start, *sequence};
             }
-            else {
-              // Regular text
-              consume(sequence);
-              return (Token){Text, start, *sequence};
-            }
-          // Checking if there is 2 '*'s in a row.
-          } else if(peek_next(*sequence) == '*') {
+
+            while(peek(*sequence) != '\0' && !is_line_break(peek(*sequence)) && peek(*sequence) != '*') consume(sequence);
+
             consume(sequence);
-            if(peek_next(*sequence) == ' ') {
-              // Not bold because it was '** '
-              while(is_identifier_char(**sequence)) consume(sequence);
+            return (Token){Bold, start, *sequence};
+        } else {
+          while(is_identifier_char(peek(*sequence))) consume(sequence);
+          return (Token){Text, start, *sequence};
+        }
 
-              consume(sequence);
-              return (Token){Text, start, *sequence}; // TODO get rid of the potential *'s.
-            }
-            else if (is_identifier_char(peek_next(*sequence))) {
-              // Bold because an identifier was after the **'s.
-              while(is_identifier_char(**sequence)) consume(sequence);
-
-              if(is_line_break(peek(*sequence))) {
-                  consume(sequence);
-                  return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
-              }
-              else if(peek(*sequence) == '*' && peek_next(*sequence) == '*') {
-                  consume(sequence);
-                  return (Token){Bold, start, *sequence}; // TODO get rid of the *'s.
-                  // strong text.
-              } 
-              else {
-                consume(sequence);
-                return (Token){Text, start, *sequence};
-              }
-            } else {
-                consume(sequence);
-                return (Token){Text, start, *sequence};
-            }
-          }
-        // case '_':
-          // TODO:
-        default:
-            return (Token){Unknown, *sequence, ++(*sequence)};
-    }
+      // case '_':
+        // TODO:
+      default:
+          return (Token){Unknown, *sequence, ++(*sequence)};
+}
 }

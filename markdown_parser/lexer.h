@@ -19,6 +19,7 @@ typedef enum
     NumberedListItem, // Digit followed by .
     Italic,           // \n*{text}, \n_{text}, _{text}_ or *{text}*
     Bold,             // \n**{text}, \n__{text}, __{text}__ or **{text}**
+    Unsupported,     
 }TokenType;
 
 typedef struct
