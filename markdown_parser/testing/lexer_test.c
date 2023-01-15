@@ -74,6 +74,18 @@ void test_next_list_item(void) {
     }   
 }
 
+void test_next_list_item2(void) {
+    const char* sequence = "\n* asd";
+    next(&sequence);
+    Token token = next(&sequence);
+
+    if(token.type == ListItem) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "ListItem", get_token_type_string(token.type));
+    }      
+}
+
 void test_next_numbered_list_item(void) {
     char* text = "\n1. ";
     next(&text);
