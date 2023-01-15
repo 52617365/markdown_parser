@@ -13,5 +13,6 @@ int main(void) {
     test_next_italic();
     test_next_italic2();
     test_next_bold();
+    test_next_bold2();
 }
 

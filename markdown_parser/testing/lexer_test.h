@@ -9,3 +9,4 @@ void test_full_source_coverage(void);
 void test_next_italic(void);
 void test_next_italic2(void);
 void test_next_bold(void);
+void test_next_bold2(void);

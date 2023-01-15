@@ -125,8 +125,19 @@ void test_next_italic2(void) {
     }   
 }
 
-
 void test_next_bold(void) {
+    const char* sequence = "\n**asd";
+    next(&sequence);
+    Token token = next(&sequence);
+
+    if(token.type == Bold) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Bold", get_token_type_string(token.type));
+    }   
+}
+
+void test_next_bold2(void) {
     const char* sequence = "**asd**";
     Token token = next(&sequence);
 

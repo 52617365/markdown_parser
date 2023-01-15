@@ -3,6 +3,7 @@
 #include <stdio.h>
 
 const char* start;
+const char* end;
 
 char peek_prev(const char* sequence){ 
     --sequence;
@@ -44,7 +45,6 @@ char* get_token_type_string(size_t token) {
         case 12: return "NumberedListItem";
         case 13: return "Italic";
         case 14: return "Bold";
-        case 15: return "Unsupported";
         default: return "Unknown";
     }
 }
@@ -339,32 +339,25 @@ Token next(const char** sequence) {
           // Here we have a '*' + identifier so it's italic.
           if(is_identifier_char(peek_next(*sequence))) {
               consume(sequence);
-              while(peek(*sequence) != '\0' && !is_line_break(peek(*sequence)) && peek(*sequence) != '*') consume(sequence);
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
               consume(sequence);
               return (Token){Italic, start, *sequence};
           }
-        
-        if(peek_next(*sequence) == '*') {
-            // Here it's either bold text or bold inside italic (3x '*') which is unsupported.
-            consume(sequence);
-
-            if(peek_next(*sequence) == '*') { // we don't want to support bold text inside italic cuz im not gonna use it.
+          if(peek_next(*sequence) == '*') { // TODO: this doesn't work well, fix.
+              // Here it's either bold text or bold inside italic (3x '*') which is unsupported.
+              consume(sequence); 
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
               consume(sequence);
-              return (Token){Unsupported, start, *sequence};
-            }
-
-            while(peek(*sequence) != '\0' && !is_line_break(peek(*sequence)) && peek(*sequence) != '*') consume(sequence);
-
-            consume(sequence);
-            return (Token){Bold, start, *sequence};
-        } else {
-          while(is_identifier_char(peek(*sequence))) consume(sequence);
-          return (Token){Text, start, *sequence};
-        }
+              if(peek_next(*sequence) == '*') {
+                consume(sequence);
+              }
+              return (Token){Bold, start, *sequence};
+          }
 
       // case '_':
         // TODO:
       default:
-          return (Token){Unknown, *sequence, ++(*sequence)};
+          consume(sequence);
+          return (Token){Unknown, *sequence, *sequence};
 }
 }
