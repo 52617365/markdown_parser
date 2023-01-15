@@ -241,8 +241,10 @@ Token next(const char** sequence) {
         case '_': // TODO: this will change cuz italic and strong text.
             start = *sequence;
             while(is_identifier_char(peek(*sequence))) consume(sequence);
-            return (Token){Text, start, *sequence};
+            end = *sequence;
+            return (Token){Text, start, end};
         case '`':
+        // TODO: handle this.
             return (Token){Backtick, *sequence, ++(*sequence)};
         case '0':
         case '1':
@@ -260,9 +262,18 @@ Token next(const char** sequence) {
               consume(sequence);
               // Numbered list items have to have a space after dot.
               if (peek(*sequence) == ' ') { 
-                return (Token){NumberedListItem, start, *sequence};
+                consume(sequence);
+                start = *sequence;
+                while(is_digit(peek(*sequence))) consume(sequence);
+                end = *sequence;
+                consume(sequence);
+                return (Token){NumberedListItem, start, end};
               } else {
-                return (Token){Text, start, --(*sequence)};
+                start = *sequence;
+                while(is_identifier_char(peek(*sequence))) consume(sequence);
+                end = *sequence;
+                consume(sequence);
+                return (Token){Text, start, end};
               }
             }
             return (Token){Text, start, *sequence};
@@ -277,24 +288,43 @@ Token next(const char** sequence) {
               }
               if(peek(*sequence) == ' ' && amount_of_hashes <= 6) { // Headings have to end with a space.
                 consume(sequence);
-                return (Token){Heading, start, *sequence};
+                start = *sequence;
+                while(is_identifier_char(peek(*sequence))) consume(sequence);
+                end = *sequence;
+                consume(sequence);
+                return (Token){Heading, start, end};
               } else {
                 consume(sequence);
-                return (Token){Text, start, *sequence};
+                start = *sequence;
+                while(is_identifier_char(peek(*sequence))) consume(sequence);
+                end = *sequence;
+                consume(sequence);
+                return (Token){Text, start, end};
               }
             } else {
               consume(sequence);
-              return (Token){Text, start, *sequence};
+              start = *sequence;
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              end = *sequence;
+              consume(sequence);
+              return (Token){Text, start, end};
             }
         case '>':
-          start = *sequence;
           // Blockquotes can only start on a new line.
           if(is_line_break(peek_prev(*sequence))) {
               consume(sequence);
-              return (Token){Blockquote, start, *sequence};
+              start = *sequence;
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              end = *sequence;
+              consume(sequence);
+              return (Token){Blockquote, start, end};
           } else {
               consume(sequence);
-              return (Token){Text, start, *sequence};
+              start = *sequence;
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              end = *sequence;
+              consume(sequence);
+              return (Token){Text, start, end};
           }
         case '-':
           start = *sequence;
@@ -302,19 +332,27 @@ Token next(const char** sequence) {
           if(is_line_break(peek_prev(*sequence))) {
             consume(sequence);
             if(peek(*sequence) == ' ') {
-              while(is_identifier_char(**sequence)) consume(sequence);
-              // TODO: do we want to capture the text within the list item here?
               consume(sequence);
-              return (Token){ListItem, start, *sequence};
+              start = *sequence;
+              while(is_identifier_char(**sequence)) consume(sequence);
+              end = *sequence;
+              consume(sequence);
+              return (Token){ListItem, start, end};
             }
             else {
-              while(is_identifier_char(**sequence)) consume(sequence);
+              start = *sequence;
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              end = *sequence;
               consume(sequence);
-              return (Token){Text, start, *sequence};
+              return (Token){Text, start, end};
             }
           } else {
               consume(sequence);
-              return (Token){Text, start, *sequence};
+              start = *sequence;
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              end = *sequence;
+              consume(sequence);
+              return (Token){Text, start, end};
           }
         case '*':
           start = *sequence;
@@ -323,8 +361,9 @@ Token next(const char** sequence) {
           if(peek_prev(*sequence) == '\n' && peek_next(*sequence) == ' ') {
             consume(sequence);
             while(is_identifier_char(peek(*sequence))) consume(sequence);
+            end = *sequence;
             consume(sequence);
-            return (Token){ListItem, start, *sequence};
+            return (Token){ListItem, start, end};
           }
           //
 
@@ -332,24 +371,27 @@ Token next(const char** sequence) {
           if(peek_prev(*sequence) == '\\') {
             consume(sequence);
             while(is_identifier_char(peek(*sequence))) consume(sequence);
+            end = *sequence;
             consume(sequence);
-            return (Token){Text, start, *sequence};
+            return (Token){Text, start, end};
           }
 
           // Here we have a '*' + identifier so it's italic.
           if(is_identifier_char(peek_next(*sequence))) {
               consume(sequence);
               while(is_identifier_char(peek(*sequence))) consume(sequence);
-              consume(sequence);
-              return (Token){Italic, start, *sequence};
+              end = *sequence;
+              while(peek(*sequence) == '*') consume(sequence);
+              return (Token){Italic, start, end};
           }
           if(peek_next(*sequence) == '*') { // TODO: this doesn't work well, fix.
               // Here it's either bold text or bold inside italic (3x '*') which is unsupported.
               while(peek(*sequence) == '*') consume(sequence);
               consume(sequence); 
               while(is_identifier_char(peek(*sequence))) consume(sequence);
+              end = *sequence;
               while(peek(*sequence) == '*') consume(sequence);
-              return (Token){Bold, start, *sequence};
+              return (Token){Bold, start, end};
           }
 
       // case '_':
