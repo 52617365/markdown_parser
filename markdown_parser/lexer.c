@@ -306,7 +306,6 @@ Token next(const char** sequence) {
                 return (Token){Heading, start, end};
               } else {
                 consume(sequence);
-                start = *sequence;
                 while(is_identifier_char(peek(*sequence))) consume(sequence);
                 end = *sequence;
                 consume(sequence);

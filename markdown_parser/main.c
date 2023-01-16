@@ -16,9 +16,5 @@ int main(void) {
 }
 
 
-// Stuff that works:
-// - Headings
-// 
-
 // Stuff to fix:
 // - Header with 6+ #'s doesn't get parsed correctly. The string should start at the first #, not at the text.
