@@ -45,9 +45,10 @@ char* get_token_type_string(size_t token) {
         case 12: return "NumberedListItem";
         case 13: return "Italic";
         case 14: return "Bold";
+        case 14: return "TERMINATE"; // TODO: Terminate when this gets called.
         default: return "Unknown";
     }
-}
+} 
 
 bool is_line_break(char c) {
   switch(c) {
@@ -327,14 +328,14 @@ Token next(const char** sequence) {
               return (Token){Text, start, end};
           }
         case '-':
-          start = *sequence;
           // List items can only start on a new line.
+          start = *sequence;
           if(is_line_break(peek_prev(*sequence))) {
             consume(sequence);
             if(peek(*sequence) == ' ') {
               consume(sequence);
               start = *sequence;
-              while(is_identifier_char(**sequence)) consume(sequence);
+              while(is_identifier_char(peek(*sequence))) consume(sequence);
               end = *sequence;
               consume(sequence);
               return (Token){ListItem, start, end};
@@ -356,20 +357,17 @@ Token next(const char** sequence) {
           }
         case '*':
           start = *sequence;
-
-          // Handling list item.
-          if(peek_prev(*sequence) == '\n' && peek_next(*sequence) == ' ') {
+          // Checking if list item.
+          if(is_line_break(peek_prev(*sequence)) && peek_next(*sequence) == ' ') {
             consume(sequence);
             while(is_identifier_char(peek(*sequence))) consume(sequence);
             end = *sequence;
             consume(sequence);
             return (Token){ListItem, start, end};
           }
-          //
 
           // If user escaped the * then it's regular text.
           if(peek_prev(*sequence) == '\\') {
-            consume(sequence);
             while(is_identifier_char(peek(*sequence))) consume(sequence);
             end = *sequence;
             consume(sequence);
@@ -379,18 +377,24 @@ Token next(const char** sequence) {
           // Here we have a '*' + identifier so it's italic.
           if(is_identifier_char(peek_next(*sequence))) {
               consume(sequence);
-              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              while(!is_line_break(peek(*sequence)) && peek(*sequence) != '\0' && peek(*sequence) != '*') consume(sequence);
               end = *sequence;
-              while(peek(*sequence) == '*') consume(sequence);
+              consume(sequence);
               return (Token){Italic, start, end};
           }
+
           if(peek_next(*sequence) == '*') { // TODO: this doesn't work well, fix.
-              // Here it's either bold text or bold inside italic (3x '*') which is unsupported.
-              while(peek(*sequence) == '*') consume(sequence);
-              consume(sequence); 
-              while(is_identifier_char(peek(*sequence))) consume(sequence);
+              consume(sequence);
+              if(peek_next(*sequence) == '*') {
+                consume(sequence);
+                return (Token){Unsupported, start, start}; // TODO: terminate.
+              }
+              consume(sequence);
+              start = *sequence;
+              while(!is_line_break(peek(*sequence)) && peek(*sequence) != '\0' && peek(*sequence) != '*') consume(sequence);
               end = *sequence;
-              while(peek(*sequence) == '*') consume(sequence);
+              if(peek_next(*sequence) == '*') consume(sequence); // if it's stopped with 2 *'s then consume both of them.
+              consume(sequence);
               return (Token){Bold, start, end};
           }
 
