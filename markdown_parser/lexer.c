@@ -45,7 +45,7 @@ char* get_token_type_string(size_t token) {
         case 12: return "NumberedListItem";
         case 13: return "Italic";
         case 14: return "Bold";
-        case 14: return "TERMINATE"; // TODO: Terminate when this gets called.
+        case 15: return "TERMINATE"; // TODO: Terminate when this gets called.
         default: return "Unknown";
     }
 } 
@@ -377,6 +377,7 @@ Token next(const char** sequence) {
           // Here we have a '*' + identifier so it's italic.
           if(is_identifier_char(peek_next(*sequence))) {
               consume(sequence);
+              start = *sequence;
               while(!is_line_break(peek(*sequence)) && peek(*sequence) != '\0' && peek(*sequence) != '*') consume(sequence);
               end = *sequence;
               consume(sequence);
