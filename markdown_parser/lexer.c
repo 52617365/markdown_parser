@@ -275,7 +275,7 @@ Token next(const char** sequence) {
               if (peek(*sequence) == ' ') { 
                 consume(sequence);
                 start = *sequence;
-                while(is_digit(peek(*sequence))) consume(sequence);
+                while(is_identifier_char(peek(*sequence))) consume(sequence);
                 end = *sequence;
                 consume(sequence);
                 return (Token){NumberedListItem, start, end};
