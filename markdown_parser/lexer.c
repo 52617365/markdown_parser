@@ -166,13 +166,23 @@ bool is_digit(char c) {
   }
 }
 
+bool is_space(char c){ 
+  switch(c) {
+    case '\n':
+    case '\r':
+    case ' ':
+    return true;
+    default: return false;
+  }
+}
+
 //
 
 size_t line;
 size_t position;
 
 Token next(const char** sequence) {
-    while(**sequence == ' ') consume(sequence);
+    while(is_space(**sequence)) consume(sequence);
     switch(peek(*sequence)) {
         case '\0':
           return (Token){End, *sequence, ++(*sequence)};
@@ -384,7 +394,7 @@ Token next(const char** sequence) {
               return (Token){Italic, start, end};
           }
 
-          if(peek_next(*sequence) == '*') { // TODO: this doesn't work well, fix.
+          if(peek_next(*sequence) == '*') {
               consume(sequence);
               if(peek_next(*sequence) == '*') {
                 consume(sequence);
