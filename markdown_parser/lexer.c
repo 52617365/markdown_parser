@@ -167,30 +167,28 @@ bool is_digit(char c) {
   }
 }
 
+//
+
+size_t line;
+size_t position;
+
 bool is_space(char c){ 
   switch(c) {
     case '\n':
     case '\r':
+          ++line;
     case ' ':
     return true;
     default: return false;
   }
 }
 
-//
-
-size_t line;
-size_t position;
 
 Token next(const char** sequence) {
     while(is_space(**sequence)) consume(sequence);
     switch(peek(*sequence)) {
         case '\0':
           return (Token){End, *sequence, ++(*sequence)};
-        case '\n':
-        case '\r':
-          ++line;
-          return (Token){Linebreak, *sequence, ++(*sequence)};
         case 'a':
         case 'b':
         case 'c':
@@ -388,7 +386,8 @@ Token next(const char** sequence) {
           if(is_identifier_char(peek_next(*sequence))) {
               consume(sequence);
               start = *sequence;
-              while(!is_line_break(peek(*sequence)) && peek(*sequence) != '\0' && peek(*sequence) != '*') consume(sequence);
+              // while(!is_line_break(peek(*sequence)) && peek(*sequence) != '\0' && peek(*sequence) != '*') consume(sequence);
+              while(peek(*sequence) != '*' && peek(*sequence) != '\0' && !is_line_break(peek(*sequence))) consume(sequence);
               end = *sequence;
               consume(sequence);
               return (Token){Italic, start, end};
