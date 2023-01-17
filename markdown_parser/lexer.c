@@ -142,6 +142,7 @@ bool is_identifier_char(char c) {
     case '&':
     case '?':
     case '|':
+    case '_':
       return true;
     default:
       return false;

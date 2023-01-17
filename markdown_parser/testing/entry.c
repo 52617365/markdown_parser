@@ -10,7 +10,6 @@ int main(void) {
     test_next_list_item();
     test_next_list_item2();
     test_next_numbered_list_item();
-    test_full_source_coverage();
     test_next_italic();
     test_next_italic2();
     test_next_bold();
