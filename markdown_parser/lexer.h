@@ -10,7 +10,7 @@ typedef enum
     ExclamationMark,  // !
     Asterisk,         // *
     Underscore,       // _
-    Backtick,         // ` 
+    Code,             // `{text}` or ```{text}```
     Linebreak,        // \n
     Unknown,          //
     End,              // '\0'
@@ -20,6 +20,7 @@ typedef enum
     Italic,           // \n*{text}, \n_{text}, _{text}_ or *{text}*
     Bold,             // \n**{text}, \n__{text}, __{text}__ or **{text}**
     Unsupported,
+    Error,
 }TokenType;
 
 

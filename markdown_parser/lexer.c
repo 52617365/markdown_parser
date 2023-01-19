@@ -36,7 +36,7 @@ char* get_token_type_string(size_t token) {
         case 3: return "ExclamationMark";
         case 4: return "Asterisk";
         case 5: return "Underscore";
-        case 6: return "Backtick";
+        case 6: return "Code";
         case 7: return "Linebreak";
         case 8: return "Unknown";
         case 9: return "End";
@@ -252,10 +252,26 @@ Token next(const char** sequence) {
             start = *sequence;
             while(is_identifier_char(peek(*sequence))) consume(sequence);
             end = *sequence;
+            consume(sequence);
             return (Token){Text, start, end};
         case '`':
-        // TODO: handle this.
-            return (Token){Backtick, *sequence, ++(*sequence)};
+          size_t amount_of_backticks = 0;
+          while(peek(*sequence) == '`') {
+            ++amount_of_backticks;
+            consume(sequence);
+          }
+          start = *sequence;
+          if (amount_of_backticks > 1) {
+            while(**sequence != '`' && **sequence != '\0') consume(sequence);
+            end = *sequence;
+            while(**sequence == '`') consume(sequence);
+            return (Token){Code, start, end};
+          } else {
+            while(**sequence != '`' && **sequence != '\0' && !is_line_break(**sequence)) consume(sequence);
+            end = *sequence;
+            while(**sequence == '`') consume(sequence);
+            return (Token){Code, start, end};
+          }
         case '0':
         case '1':
         case '2':
@@ -386,7 +402,6 @@ Token next(const char** sequence) {
           if(is_identifier_char(peek_next(*sequence))) {
               consume(sequence);
               start = *sequence;
-              // while(!is_line_break(peek(*sequence)) && peek(*sequence) != '\0' && peek(*sequence) != '*') consume(sequence);
               while(peek(*sequence) != '*' && peek(*sequence) != '\0' && !is_line_break(peek(*sequence))) consume(sequence);
               end = *sequence;
               consume(sequence);

@@ -16,4 +16,5 @@ int main(void) {
 
 // TODO:
 // - Differentiate between diff. headings.
-// - Italic and bold dont work correctly.
+// - Backticks into code.
+// bold with 2 "_"s.
