@@ -405,6 +405,7 @@ Token next(const char** sequence) {
               while(peek(*sequence) != '*' && peek(*sequence) != '\0' && !is_line_break(peek(*sequence))) consume(sequence);
               end = *sequence;
               consume(sequence);
+              consume(sequence);
               return (Token){Italic, start, end};
           }
 
