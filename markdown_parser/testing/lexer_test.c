@@ -15,14 +15,69 @@ void test_next_letters(void) {
     }
 }
 
-void test_next_heading(void) {
+void test_next_heading1(void) {
     char* text = "\n# ";
     Token token = next(&text);
 
-    if(token.type == Heading) {
+    if(token.type == Heading1) {
         PRINT_SUCCESS();
     } else {
-        LOG_RED("token.type", "Heading", get_token_type_string(token.type));
+        LOG_RED("token.type", "Heading1", get_token_type_string(token.type));
+    }
+}
+
+void test_next_heading2(void) {
+    char* text = "\n## ";
+    Token token = next(&text);
+
+    if(token.type == Heading2) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Heading2", get_token_type_string(token.type));
+    }
+}
+
+void test_next_heading3(void) {
+    char* text = "\n### ";
+    Token token = next(&text);
+
+    if(token.type == Heading3) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Heading3", get_token_type_string(token.type));
+    }
+}
+
+void test_next_heading4(void) {
+    char* text = "\n#### ";
+    Token token = next(&text);
+
+    if(token.type == Heading4) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Heading4", get_token_type_string(token.type));
+    }
+}
+
+void test_next_heading5(void) {
+    char* text = "\n##### ";
+    Token token = next(&text);
+
+    if(token.type == Heading5) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Heading5", get_token_type_string(token.type));
+    }
+}
+
+void test_next_heading6(void) {
+    char* text = "\n###### ";
+    Token token = next(&text);
+
+    if(token.type == Heading6) {
+        PRINT_SUCCESS();
+    } else {
+        LOG_RED("token.type", "Heading6", get_token_type_string(token.type));
     }
 }
 

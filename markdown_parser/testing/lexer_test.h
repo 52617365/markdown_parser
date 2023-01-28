@@ -1,5 +1,10 @@
 void test_next_letters(void);
-void test_next_heading(void);
+void test_next_heading1(void);
+void test_next_heading2(void);
+void test_next_heading3(void);
+void test_next_heading4(void);
+void test_next_heading5(void);
+void test_next_heading6(void);
 void test_next_numbers(void);
 void test_next_blockquote(void);
 void test_next_letters_that_could_be_mistaken_for_heading(void);
