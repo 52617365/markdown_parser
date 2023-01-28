@@ -17,7 +17,7 @@ int main(void) {
     test_next_numbered_list_item();
     test_next_italic();
     test_next_italic2();
-    test_next_bold();
-    test_next_bold2();
+    test_next_strong();
+    test_next_strong2();
 }
 

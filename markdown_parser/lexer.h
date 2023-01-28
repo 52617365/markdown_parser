@@ -6,10 +6,6 @@ typedef enum
 {
     Text,             // 0-9 or a-z + nordic.
     Blockquote,       // >
-    Dash,             // -
-    ExclamationMark,  // !
-    Asterisk,         // *
-    Underscore,       // _
     Code,             // `{text}` or ```{text}```
     Linebreak,        // \n
     Unknown,          //
@@ -23,7 +19,7 @@ typedef enum
     ListItem,         // '-' or '*' at the start of the line followed by space.
     NumberedListItem, // Digit followed by .
     Italic,           // \n*{text}, \n_{text}, _{text}_ or *{text}*
-    Bold,             // \n**{text}, \n__{text}, __{text}__ or **{text}**
+    Strong,             // \n**{text}, \n__{text}, __{text}__ or **{text}**
     Unsupported,
     Error,
 }TokenType;

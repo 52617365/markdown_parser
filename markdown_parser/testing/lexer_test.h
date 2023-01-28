@@ -13,5 +13,5 @@ void test_next_list_item2(void);
 void test_next_numbered_list_item(void);
 void test_next_italic(void);
 void test_next_italic2(void);
-void test_next_bold(void);
-void test_next_bold2(void);
+void test_next_strong(void);
+void test_next_strong2(void);

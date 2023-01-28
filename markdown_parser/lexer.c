@@ -32,25 +32,21 @@ char* get_token_type_string(size_t token) {
     switch(token) {
         case 0: return "Text";
         case 1: return "Blockquote";
-        case 2: return "Dash";
-        case 3: return "ExclamationMark";
-        case 4: return "Asterisk";
-        case 5: return "Underscore";
-        case 6: return "Code";
-        case 7: return "Linebreak";
-        case 8: return "Unknown";
-        case 9: return "End";
-        case 10: return "Heading1";
-        case 11: return "Heading2";
-        case 12: return "Heading3";
-        case 13: return "Heading4";
-        case 14: return "Heading5";
-        case 15: return "Heading6";
-        case 16: return "ListItem";
-        case 17: return "NumberedListItem";
-        case 18: return "Italic";
-        case 19: return "Bold";
-        case 20: return "TERMINATE"; // TODO: Terminate when this gets called.
+        case 2: return "Code";
+        case 3: return "Linebreak";
+        case 4: return "Unknown";
+        case 5: return "End";
+        case 6: return "Heading1";
+        case 7: return "Heading2";
+        case 8: return "Heading3";
+        case 9: return "Heading4";
+        case 10: return "Heading5";
+        case 11: return "Heading6";
+        case 12: return "ListItem";
+        case 13: return "NumberedListItem";
+        case 14: return "Italic";
+        case 15: return "Strong";
+        case 16: return "TERMINATE"; // TODO: Terminate when this gets called.
         default: return "Unknown";
     }
 } 
@@ -422,7 +418,7 @@ Token next(const char** sequence) {
               end = *sequence;
               if(peek_next(*sequence) == '*') consume(sequence); // if it's stopped with 2 *'s then consume both of them.
               consume(sequence);
-              return (Token){Bold, start, end};
+              return (Token){Strong, start, end};
           }
       // case '_':
         // TODO:

@@ -1,9 +1,9 @@
 #include "lexer.h"
 typedef struct
 { 
-    char* tag_start;
-    char* tag_contents; // This gets filled later.
-    char* tag_end;
+    const char* tag_start;
+    const char* tag_contents; // This gets filled later.
+    const char* tag_end;
 } Tag;
 
-Tag markdown_to_html(TokenType token);
+Tag markdown_to_html(size_t token);
