@@ -14,7 +14,12 @@ typedef enum
     Linebreak,        // \n
     Unknown,          //
     End,              // '\0'
-    Heading,          // '#' 1-6 times.
+    Heading1,         // '#' 1 times.
+    Heading2,         // '#' 2 times.
+    Heading3,         // '#' 3 times.
+    Heading4,         // '#' 4 times.
+    Heading5,         // '#' 5 times.
+    Heading6,         // '#' 6 times.
     ListItem,         // '-' or '*' at the start of the line followed by space.
     NumberedListItem, // Digit followed by .
     Italic,           // \n*{text}, \n_{text}, _{text}_ or *{text}*
@@ -40,5 +45,6 @@ bool is_identifier_char(char c);
 bool is_digit(char c);
 void consume(const char** sequence);
 Token next(const char** sequence);
+size_t get_heading_type(size_t amount_of_hashes);
 
 #endif

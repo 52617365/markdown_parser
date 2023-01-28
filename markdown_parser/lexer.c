@@ -40,12 +40,17 @@ char* get_token_type_string(size_t token) {
         case 7: return "Linebreak";
         case 8: return "Unknown";
         case 9: return "End";
-        case 10: return "Heading";
-        case 11: return "ListItem";
-        case 12: return "NumberedListItem";
-        case 13: return "Italic";
-        case 14: return "Bold";
-        case 15: return "TERMINATE"; // TODO: Terminate when this gets called.
+        case 10: return "Heading1";
+        case 11: return "Heading2";
+        case 12: return "Heading3";
+        case 13: return "Heading4";
+        case 14: return "Heading5";
+        case 15: return "Heading6";
+        case 16: return "ListItem";
+        case 17: return "NumberedListItem";
+        case 18: return "Italic";
+        case 19: return "Bold";
+        case 20: return "TERMINATE"; // TODO: Terminate when this gets called.
         default: return "Unknown";
     }
 } 
@@ -318,7 +323,9 @@ Token next(const char** sequence) {
                 while(is_identifier_char(peek(*sequence))) consume(sequence);
                 end = *sequence;
                 consume(sequence);
-                return (Token){Heading, start, end};
+                // TODO: determine the heading type here.
+                size_t tokenType = get_heading_type(amount_of_hashes);
+                return (Token){tokenType, start, end};
               }
             } else {
               consume(sequence);
@@ -423,4 +430,16 @@ Token next(const char** sequence) {
           consume(sequence);
           return (Token){Unknown, *sequence, *sequence};
     }
+}
+
+size_t get_heading_type(size_t amount_of_hashes) {
+  switch(amount_of_hashes) {
+    case 1: return Heading1;
+    case 2: return Heading2;
+    case 3: return Heading3;
+    case 4: return Heading4;
+    case 5: return Heading5;
+    case 6: return Heading6;
+    default: return Unknown;
+  }
 }
