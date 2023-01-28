@@ -319,12 +319,6 @@ Token next(const char** sequence) {
                 end = *sequence;
                 consume(sequence);
                 return (Token){Heading, start, end};
-              } else {
-                consume(sequence);
-                while(is_identifier_char(peek(*sequence))) consume(sequence);
-                end = *sequence;
-                consume(sequence);
-                return (Token){Text, start, end};
               }
             } else {
               consume(sequence);
@@ -423,7 +417,6 @@ Token next(const char** sequence) {
               consume(sequence);
               return (Token){Bold, start, end};
           }
-
       // case '_':
         // TODO:
       default:
