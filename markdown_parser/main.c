@@ -6,7 +6,7 @@
 #include "html.h"
 
 int main(void) {
-    const char* sequence = "\n# h1_text\nnormal text\n## h2_title\n### h3_title\n#### h4_title\n##### h5_title\n###### h6_title\n*italic_text*\n_italictext_\n**bold_text**\n__bold_text__\n`code_text`\n```code_block```\n- list_member\n> blockquote\n1. numbered_list_member\n2. numbered_list_member\n*italic* and **bold**";
+    const char* sequence = "\n# h1_text\nnormal text\n## h2_title\n### h3_title\n#### h4_title\n##### h5_title\n###### h6_title\n*italic_text*\n_italictext_\n**bold_text**\n__bold_text__\n`code_text`\n```code_block```\n- list_member\n>blockquote\n1. numbered_list_member\n2. numbered_list_member\n*italic* and **bold**";
     FILE* html_output = fopen("output.html", "w");
 
 
@@ -25,7 +25,7 @@ int main(void) {
 }
 
 
-// TODO:
-// - Remove space after blockquote > mark.
+// TODO in order:
 // - Include the linebreaks in the html output.
 // - Bold and italic with _ and - doesn't seem to work well.
+// - We need the <ul> or <ol> in the list items.
