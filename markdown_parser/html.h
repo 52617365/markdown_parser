@@ -1,8 +1,8 @@
 #include "lexer.h"
+#include <stddef.h>
 typedef struct
 { 
     const char* tag_start;
-    const char* tag_contents; // This gets filled later.
     const char* tag_end;
 } Tag;
 

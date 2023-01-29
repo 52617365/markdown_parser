@@ -19,7 +19,7 @@ typedef enum
     ListItem,         // '-' or '*' at the start of the line followed by space.
     NumberedListItem, // Digit followed by .
     Italic,           // \n*{text}, \n_{text}, _{text}_ or *{text}*
-    Strong,             // \n**{text}, \n__{text}, __{text}__ or **{text}**
+    Strong,           // \n**{text}, \n__{text}, __{text}__ or **{text}**
     Unsupported,
     Error,
 }TokenType;
