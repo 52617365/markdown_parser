@@ -420,8 +420,6 @@ Token next(const char** sequence) {
               consume(sequence);
               return (Token){Strong, start, end};
           }
-      // case '_':
-        // TODO:
       default:
           consume(sequence);
           return (Token){Unknown, *sequence, *sequence};

@@ -26,6 +26,6 @@ int main(void) {
 
 
 // TODO in order:
-// - Include the linebreaks in the html output.
+// - Include the linebreaks in the html output. Maybe we can outsource this to some linter? We could also make it ourselves of course.
 // - Bold and italic with _ and - doesn't seem to work well.
 // - We need the <ul> or <ol> in the list items.

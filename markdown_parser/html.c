@@ -15,6 +15,7 @@ Tag markdown_to_html(size_t token) {
         case Heading6:
             return (Tag){"<h6>", "</h6>"};
         case Text:
+            return (Tag){"<p>", "</p>"};
         case Linebreak:
             return (Tag){"", ""};
         case Blockquote:
